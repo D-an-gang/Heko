@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "607857336528",
+    "project_id": "heko-a6b88",
+    "storage_bucket": "heko-a6b88.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:607857336528:android:374fb54d1eba89604cbed5",
+        "android_client_info": {
+          "package_name": "project.heko"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcS7eMYkKVwxiFNpMnqZjwhTWr_ECNnWM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
