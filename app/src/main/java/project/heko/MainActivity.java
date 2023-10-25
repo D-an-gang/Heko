@@ -1,42 +1,46 @@
 package project.heko;
 
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.navigation.NavigationView;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 import project.heko.databinding.ActivityMainBinding;
+import project.heko.models.User;
+import project.heko.ui.navHeader.navHeaderViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    private ActivityMainBinding binding;
+
+    private navHeaderViewModel model;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        project.heko.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
-        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        binding.appBarMain.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
+        liveDataInit(navigationView);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -61,4 +65,30 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+    private void liveDataInit(NavigationView navView) {
+        model = new ViewModelProvider(this).get(navHeaderViewModel.class);
+        View nav = navView.getHeaderView(0);
+        TextView username = nav.findViewById(R.id.username);
+        TextView email = nav.findViewById(R.id.email);
+        ImageView img = nav.findViewById(R.id.imageView);
+        // Create the observer which updates the UI.
+        final Observer<User> nameObserver = newUser -> {
+            // Update the UI, in this case, a TextView.
+            if (newUser.getId() != null) {
+                username.setText(newUser.getUsername());
+                email.setText(newUser.getEmail());
+                Log.i("changed", " HARRY!!!");
+                //change img
+            } else {
+                username.setText(R.string.nav_header_title);
+                email.setText(R.string.nav_header_subtitle);
+                img.setImageResource(R.mipmap.ic_launcher);
+            }
+        };
+        // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
+        model.getUser().observe(this, nameObserver);
+    }
+
+
 }
