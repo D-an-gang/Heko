@@ -1,18 +1,22 @@
 package project.heko.models;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 public class User {
+    @NonNull
     private String username;
     private String email;
     private String imgUrl;
-     private String defaultImgUrl = "https://firebasestorage.googleapis.com/v0/b/heko-a6b88.appspot.com/o/logo-9.png?alt=media&token=37e6dac7-aff9-4563-8cdf-c63fe8537319";
-    public User(String username, String email, String imgUrl, String id) {
+     private final String defaultImgUrl = "https://firebasestorage.googleapis.com/v0/b/heko-a6b88.appspot.com/o/logo-9.png?alt=media&token=37e6dac7-aff9-4563-8cdf-c63fe8537319";
+    public User(@NonNull String username, String email, String imgUrl, @Nullable String id) {
         this.username = username;
         this.email = email;
         this.imgUrl = imgUrl;
         this.id = id;
     }
 
-    public User(String username, String email, String id) {
+    public User(@NonNull String username, String email, @Nullable String id) {
         this.username = username;
         this.email = email;
         this.id = id;
@@ -26,11 +30,12 @@ public class User {
         this.imgUrl = defaultImgUrl;
     }
 
+    @NonNull
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(@NonNull String username) {
         this.username = username;
     }
 
@@ -50,13 +55,15 @@ public class User {
         this.imgUrl = imgUrl;
     }
 
+    @Nullable
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         this.id = id;
     }
 
+    @Nullable
     private String id;
 }

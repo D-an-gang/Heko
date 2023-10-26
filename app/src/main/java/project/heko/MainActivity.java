@@ -23,8 +23,17 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Objects;
 
 import project.heko.auth.LoginActivity;
 import project.heko.databinding.ActivityMainBinding;
@@ -36,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
 
     private navHeaderViewModel model;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +75,18 @@ public class MainActivity extends AppCompatActivity {
                 int resCode = o.getResultCode();
                 Intent data = o.getData();
 
-                if (resCode == RESULT_OK) {
-                    Bundle extras = data.getExtras();
-                    if (extras != null || extras.getString("id") != null) {
-                        User user = new User(extras.getString("username"), extras.getString("email"), extras.getString("img"), extras.getString("id"));
-                        model.getUser().setValue(user);
-                    } else {
-                        Toast.makeText(MainActivity.this, getResources().getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
+                if (resCode == RESULT_OK && data != null) {
+                    try {
+                        Bundle extras = data.getExtras();
+                        if (extras != null || extras.getString("id") != null) {
+                            User user = new User(Objects.requireNonNull(extras.getString("username")), extras.getString("email"), extras.getString("img"), extras.getString("id"));
+                            model.getUser().setValue(user);
+                        } else {
+                            Toast.makeText(MainActivity.this, getResources().getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
+                            model.getUser().setValue(new User());
+                        }
+                    } catch (NullPointerException e) {
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.error_norm), Toast.LENGTH_SHORT).show();
                         model.getUser().setValue(new User());
                     }
                 }
@@ -79,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
         });
         //initialize login on click listener
         authMethodInit(navigationView, loginLauncher);
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
     }
 
     @Override
@@ -86,6 +104,18 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            mapUser(currentUser);
+        } else {
+            model.getUser().setValue(new User());
+        }
     }
 
     @Override
@@ -122,11 +152,38 @@ public class MainActivity extends AppCompatActivity {
     private void authMethodInit(@NonNull NavigationView navView, ActivityResultLauncher<Intent> loginLauncher) {
         View nav = navView.getHeaderView(0);
         nav.setOnClickListener(e -> {
-            if (model.getUser().getValue().getId() == null) {
+            if (Objects.requireNonNull(model.getUser().getValue()).getId() == null) {
                 Intent intent = new Intent(this, LoginActivity.class);
                 loginLauncher.launch(intent);
             } else {
                 //TODO user profile page
+                Toast.makeText(this, "Profile page underdevelopment", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void mapUser(@NonNull FirebaseUser user) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference ref = db.collection("users").document(user.getUid());
+        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    final User res = new User();
+                    if (document.exists()) {
+                        res.setUsername(Objects.requireNonNull(document.getString("username")));
+                        res.setImgUrl(document.getString("imgUrl"));
+                        res.setEmail(document.getString("email"));
+                        res.setId(document.getId());
+                        model.getUser().setValue(res);
+                    } else {
+                        mAuth.signOut();
+                        Toast.makeText(MainActivity.this, R.string.error_user_not_found, Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, R.string.error_norm, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

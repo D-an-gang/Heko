@@ -11,6 +11,9 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
 
+    <string name="error_norm">Đã có lỗi xảy ra</string>
+    <string name="error_user_not_found">Không tìm thấy dữ liệu người dùng</string>
+
     <string name="logo_description">Heko the reading app</string>
     <string name="title_activity_login">Đăng Nhập</string>
     <string name="prompt_email">Email</string>
@@ -18,10 +21,13 @@
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="invalid_email">Email không hợp lệ</string>
+    <string name="invalid_password">Mật khẩu phải lớn hơn 5 kí tự</string>
     <string name="login_failed">"Login failed"</string>
     <string name="login_title_font">sans-serif-black</string>
     <string name="login_signup_link">Chưa có tài khoản? Đăng ký ngay̲</string>
+    <string name="login_email_empty_prompt">Email Không được để trống̲</string>
+    <string name="login_password_empty_prompt">Mật khẩu Không được để trống̲</string>
+
 
 </resources>

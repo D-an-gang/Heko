@@ -22,18 +22,16 @@
 
         <ImageView
             android:id="@+id/login_logo"
-            android:contentDescription="@string/logo_description"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_marginTop="84dp"
             android:background="@drawable/curve_box_teal_bg"
+            android:contentDescription="@string/logo_description"
             android:src="@mipmap/ic_launcher"
-            tools:layout_editor_absoluteX="132dp"
-            tools:layout_editor_absoluteY="67dp"
-            android:layout_marginTop="80dp"
-            />
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
 
