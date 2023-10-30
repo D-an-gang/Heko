@@ -10,8 +10,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,6 +28,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        Objects.requireNonNull(getSupportActionBar()).hide();
         //In gach chan nut sign up
         String mystring = getResources().getString(R.string.login_signup_link);
         SpannableString content = new SpannableString(mystring);
@@ -80,6 +89,8 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         });
+        //init nut dang ky tai khoan
+        signupBtnInit();
     }
 
     public boolean validate(TextView email, TextView password) {
@@ -89,8 +100,8 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         }
         if (password.getText().toString().trim().equals("")) {
-            password.setError(getResources().getString(R.string.login_email_empty_prompt));
-            Toast.makeText(this, R.string.login_email_empty_prompt, Toast.LENGTH_SHORT).show();
+            password.setError(getResources().getString(R.string.login_password_empty_prompt));
+            Toast.makeText(this, R.string.login_password_empty_prompt, Toast.LENGTH_SHORT).show();
             return false;
         }
         if (!validateEmail(email.getText().toString())) {
@@ -170,4 +181,24 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void signupBtnInit(){
+        binding.signupLink.setOnClickListener(e->{
+            binding.txtEmail.setText("");
+            binding.txtPw.setText("");
+            Intent intent = new Intent(this, SignupActivity.class);
+            signupLauncher.launch(intent);
+        });
+    }
+    ActivityResultLauncher<Intent> signupLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult o) {
+            int resCode = o.getResultCode();
+            Intent data = o.getData();
+            if(resCode==RESULT_OK && data != null){
+                setResult(Activity.RESULT_OK, data);
+                finish();
+            }
+        }
+    });
 }

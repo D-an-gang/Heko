@@ -8,4 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="background">#1d5167</color>
+    <color name="secondary">#1d5167</color>
+    <color name="secondary_alt">#246987</color>
 </resources>

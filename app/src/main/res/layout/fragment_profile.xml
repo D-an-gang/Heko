@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.profile.ProfileFragment"
+
+    >
+    <include
+        android:id="@+id/loader"
+        layout="@layout/loading_overlay"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="15dp"
+        android:paddingTop="20dp"
+        android:theme="@style/Theme.Heko">
+
+        <TextView
+            android:id="@+id/txt_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/profile_header_title"
+            android:textSize="20sp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RelativeLayout
+            android:id="@+id/user_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:flow_horizontalGap="10dp"
+            app:layout_constraintTop_toBottomOf="@id/txt_header">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="@dimen/logoutBtn_h"
+                android:layout_height="@dimen/logoutBtn_h"
+                android:src="@mipmap/ic_launcher"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="2dp" />
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="20dp"
+                android:layout_toEndOf="@id/profile_image"
+                android:ellipsize="end"
+                android:maxWidth="120dp"
+                android:singleLine="true"
+                android:text="@string/nav_header_title"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:id="@+id/logout_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center"
+                android:background="?attr/selectableItemBackground"
+                android:backgroundTint="@color/cardview_dark_background"
+                android:foreground="?attr/selectableItemBackground"
+                android:orientation="horizontal"
+                tools:ignore="RelativeOverlap">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/logoutBtn_h"
+                    android:layout_marginEnd="12dp"
+                    android:background="@android:color/transparent"
+                    android:gravity="center_vertical"
+                    android:text="@string/logout"
+                    android:textSize="17sp"
+                    android:typeface="normal" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="@dimen/logoutBtn_h"
+                    android:contentDescription="@string/logout_btn_prompt"
+                    android:src="@drawable/arrow_right_from_bracket_solid" />
+            </LinearLayout>
+        </RelativeLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</FrameLayout>

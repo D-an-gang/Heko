@@ -46,11 +46,16 @@ public class MainActivity extends AppCompatActivity {
 
     private navHeaderViewModel model;
     private FirebaseAuth mAuth;
+    private ActivityMainBinding binding;
+
+    public navHeaderViewModel getModel() {
+        return model;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        project.heko.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
@@ -62,10 +67,11 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_logout)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         //set up login activity result
@@ -93,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //initialize login on click listener
-        authMethodInit(navigationView, loginLauncher);
+        authMethodInit(navigationView, loginLauncher, navController);
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
@@ -149,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         model.getUser().observe(this, nameObserver);
     }
 
-    private void authMethodInit(@NonNull NavigationView navView, ActivityResultLauncher<Intent> loginLauncher) {
+    private void authMethodInit(@NonNull NavigationView navView, ActivityResultLauncher<Intent> loginLauncher, NavController navController) {
         View nav = navView.getHeaderView(0);
         nav.setOnClickListener(e -> {
             if (Objects.requireNonNull(model.getUser().getValue()).getId() == null) {
@@ -158,6 +164,9 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 //TODO user profile page
                 Toast.makeText(this, "Profile page underdevelopment", Toast.LENGTH_SHORT).show();
+                DrawerLayout mDrawerLayout = (DrawerLayout) binding.drawerLayout;
+                mDrawerLayout.closeDrawers();
+                navController.navigate(R.id.profileFragment);
             }
         });
     }

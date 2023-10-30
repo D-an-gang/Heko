@@ -10,14 +10,20 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_logout">Đăng xuất</string>
+
+    <string name="backbtn">Go back</string>
 
     <string name="error_norm">Đã có lỗi xảy ra</string>
     <string name="error_user_not_found">Không tìm thấy dữ liệu người dùng</string>
 
     <string name="logo_description">Heko the reading app</string>
+    <string name="avatar_upload">Upload you profile photo</string>
     <string name="title_activity_login">Đăng Nhập</string>
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
+    <string name="prompt_username">Tên người dùng</string>
+    <string name="prompt_password">Mật Khâu</string>
+    <string name="prompt_password_con">Xác nhận Mật khẩu</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
@@ -29,5 +35,17 @@
     <string name="login_email_empty_prompt">Email Không được để trống̲</string>
     <string name="login_password_empty_prompt">Mật khẩu Không được để trống̲</string>
 
+    <string name="signup_title">Đăng ký tài khoản</string>
+    <string name="pw_not_match">xác nhận Mật khẩu không khớp</string>
+    <string name="upload_failed">Upload ảnh thật bại</string>
+    <string name="signup_login_link">Đã có tài khoản? Đăng nhập</string>
+    <string name="signup_success">Đăng ký tài khoản thành công</string>
+    <string name="signup_failed">Đăng ký tài khoản thất bại</string>
+    <string name="logout_btn_prompt">Logout of current account</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="profile_header_title">Your profile</string>
+
+<!--    FIREBASE communication strings-->
+    <string name="fb_get_failed">Không thể lấy dữ liệu từ máy chủ</string>
 
 </resources>
