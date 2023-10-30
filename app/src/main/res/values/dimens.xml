@@ -11,6 +11,7 @@
     <dimen name="login_padding_v">70dp</dimen>
     <dimen name="login_title_w">240dp</dimen>
     <dimen name="login_title_h">80dp</dimen>
-    <dimen name="login_title_fontSize">40sp</dimen>
+    <dimen name="login_title_fontSize">25sp</dimen>
+    <dimen name="logoutBtn_h">49dp</dimen>
 
 </resources>
