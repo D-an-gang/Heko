@@ -1,5 +1,6 @@
 package project.heko.ui.profile;
 
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,16 +33,16 @@ public class ProfileFragment extends Fragment {
 
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FragmentProfileBinding binding;
-
+    private String old_username;
+    private String old_email;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         mViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        mViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
-        });
         return binding.getRoot();
+
     }
 
     @Override
@@ -55,13 +57,17 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
+            binding.txtProfileUsername.setText(user.getUsername());
+            binding.txtProfileEmail.setText(user.getEmail());
+        });
         //hide user panel first
         binding.userPanel.setVisibility(View.GONE);
         //get user data
         getUser();
         //init logout btn
         logoutButtonListener();
-
+        updateProfileListener();
     }
 
     private void logoutButtonListener() {
@@ -97,7 +103,7 @@ public class ProfileFragment extends Fragment {
         toggleLoading(true);
         if (mAuth.getCurrentUser() != null) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference docRef = db.collection("cities").document("SF");
+            DocumentReference docRef = db.collection("users").document(mAuth.getCurrentUser().getUid());
             docRef.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
@@ -106,6 +112,8 @@ public class ProfileFragment extends Fragment {
                         try {
                             User res = User.user_mapper(document);
                             mViewModel.getUser().setValue(res);
+                            old_username = res.getUsername();
+                            old_email = res.getEmail();
                             binding.userPanel.setVisibility(View.VISIBLE);
                         } catch (NullPointerException e) {
                             Log.i("fetch failed", Objects.requireNonNull(e.getMessage()));
@@ -125,4 +133,36 @@ public class ProfileFragment extends Fragment {
             endFragment();
         }
     }
+
+    private void updateProfileListener() {
+        binding.btnUpdate.setOnClickListener(v -> {
+                    toggleLoading(true);
+                    if (!old_username.equals(binding.txtProfileUsername.getText().toString())) {
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        DocumentReference userRef = db.collection("users").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+
+                        userRef
+                                .update("username", binding.txtProfileUsername.getText().toString())
+                                .addOnSuccessListener(aVoid -> Log.i("Update", "DocumentSnapshot successfully updated!"))
+                                .addOnFailureListener(e -> Log.i("Loi update", "Error updating document", e));
+                    }
+                    if (!old_email.equals(binding.txtProfileEmail.getText().toString())) {
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        if (UItools.validateEmail(binding.txtProfileEmail.getText().toString())) {
+                            assert user != null;
+                            user.updateEmail("user@example.com")
+                                    .addOnCompleteListener(task -> {
+                                        if (task.isSuccessful()) {
+                                            UItools.toast(requireActivity(), "Email cap nhat thanh cong");
+                                        }
+                                    });
+                        } else {
+                            UItools.toast(requireActivity(), "Khong phai email");
+                        }
+                    }
+                    toggleLoading(false);
+                }
+        );
+    }
+
 }

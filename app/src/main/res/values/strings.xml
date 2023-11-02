@@ -45,7 +45,17 @@
     <string name="logout">Đăng xuất</string>
     <string name="profile_header_title">Your profile</string>
 
+<!--    Fragment Profile-->
+    <string name="profile_username">Tên tài khoản</string>
+    <string name="user_detail">Thông tin cá nhân</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_btn_password">Thay đổi mật khẩu</string>
+    <string name="profile_btn_update">Cập nhật</string>
+    <string name="profile_email_hint">Nhập email mới</string>
+    <string name="profile_user_hint">Nhập tên tài khoản mới</string>
 <!--    FIREBASE communication strings-->
     <string name="fb_get_failed">Không thể lấy dữ liệu từ máy chủ</string>
+
+
 
 </resources>
