@@ -1,14 +1,14 @@
 package project.heko;
 
+import static org.junit.Assert.assertEquals;
+
 import android.util.Log;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 import project.heko.models.User;
 
@@ -34,4 +34,5 @@ public class UserTest {
             }
         });
     }
+
 }
