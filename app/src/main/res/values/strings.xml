@@ -70,6 +70,7 @@
 
     <string name="username_hint">Tên tài khoản mới</string>
     <string name="profile_username_null">Vui lòng không để trống tên tài khoản</string>
+    <string name="profile_title_update">Cập nhật tên tài khoản</string>
 
 
 </resources>
