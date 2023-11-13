@@ -1,10 +1,21 @@
 package project.heko.ui.profile;
 
+
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +42,8 @@ public class ProfileFragment extends Fragment {
 
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FragmentProfileBinding binding;
+    private String old_username;
+    private String old_email;
 
 
     @Override
@@ -38,9 +51,8 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         mViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        mViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
-        });
         return binding.getRoot();
+
     }
 
     @Override
@@ -55,13 +67,18 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
+            binding.txtProfileUsername.setText(user.getUsername());
+            binding.txtProfileEmail.setText(user.getEmail());
+        });
         //hide user panel first
         binding.userPanel.setVisibility(View.GONE);
         //get user data
         getUser();
         //init logout btn
         logoutButtonListener();
-
+        updateProfileListener();
+        updatePasswordListener();
     }
 
     private void logoutButtonListener() {
@@ -97,7 +114,7 @@ public class ProfileFragment extends Fragment {
         toggleLoading(true);
         if (mAuth.getCurrentUser() != null) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference docRef = db.collection("cities").document("SF");
+            DocumentReference docRef = db.collection("users").document(mAuth.getCurrentUser().getUid());
             docRef.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
@@ -106,6 +123,8 @@ public class ProfileFragment extends Fragment {
                         try {
                             User res = User.user_mapper(document);
                             mViewModel.getUser().setValue(res);
+                            old_username = res.getUsername();
+                            old_email = res.getEmail();
                             binding.userPanel.setVisibility(View.VISIBLE);
                         } catch (NullPointerException e) {
                             Log.i("fetch failed", Objects.requireNonNull(e.getMessage()));
@@ -125,4 +144,117 @@ public class ProfileFragment extends Fragment {
             endFragment();
         }
     }
+
+    private void updatePasswordListener(){
+        binding.btnUpdatePassword.setOnClickListener(v -> {
+                    toggleLoading(true);
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(old_email)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getActivity(), R.string.profile_email_sent, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                    toggleLoading(false);
+                }
+                );
+    }
+        @SuppressLint("InflateParams")
+        private void updateProfileListener() {
+        binding.btnUpdate.setOnClickListener(v -> {
+                toggleLoading(true);
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//// Add the buttons
+//
+//                    builder.setTitle(R.string.profile_aleart)
+//                            .setMessage(R.string.profile_confirm)
+//                            .setPositiveButton(R.string.profile_ok, (dialog, id) -> {
+//                        // User clicked OK button
+//                        if (!old_username.equals(binding.txtProfileUsername.getText().toString())) {
+//                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+//                            DocumentReference userRef = db.collection("users").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+//
+//                            userRef
+//                                    .update("username", binding.txtProfileUsername.getText().toString())
+//                                    .addOnSuccessListener(aVoid -> UItools.toast(requireActivity(), getString(R.string.profile_success_change_username)))
+//                                    .addOnFailureListener(e -> UItools.toast(requireActivity(), getString(R.string.profile_update_fail)));
+//                        }
+//                        else{
+//                            toggleLoading(false);
+//                        }
+//                    });
+//                  builder.setNegativeButton(R.string.profile_cancel, (dialog, id) -> dialog.cancel()).show();
+                    final Dialog dialog = new Dialog(requireActivity());
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.layout_dialog_username);
+                    Window window = dialog.getWindow();
+                    if(window == null){
+                        return;
+                    }
+                    window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT);
+                    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    WindowManager.LayoutParams wA = window.getAttributes();
+                    wA.gravity = Gravity.CENTER;
+                    window.setAttributes(wA);
+                    EditText new_username = dialog.findViewById(R.id.dialog_username);
+                    Button btnOK = dialog.findViewById(R.id.btn_dialog_ok);
+                    Button btnCancel = dialog.findViewById(R.id.btn_dialog_cancel);
+                    btnOK.setOnClickListener(v1 -> {
+                        if (!old_username.equals(new_username.getText().toString()) && !new_username.getText().toString().equals("")) {
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            DocumentReference userRef = db.collection("users").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+
+                            userRef
+                                    .update("username", new_username.getText().toString())
+                                    .addOnSuccessListener(aVoid -> {
+                                        UItools.toast(requireActivity(), getString(R.string.profile_success_change_username));
+                                        dialog.dismiss();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        UItools.toast(requireActivity(), getString(R.string.profile_update_fail));
+                                        dialog.dismiss();
+                                    });
+                        }
+                        else{
+                            UItools.toast(requireActivity(), getString(R.string.profile_username_null));
+                        }
+                        Toast.makeText(getActivity(), new_username.getText().toString(), Toast.LENGTH_SHORT).show();
+                    });
+                    btnCancel.setOnClickListener(v1 ->
+                        dialog.dismiss()
+                    );
+                    dialog.show();
+                toggleLoading(false);
+            }
+        );
+    }
+    //Badtrip
+//    if (!old_email.equals(binding.txtProfileEmail.getText().toString())) {
+//        String new_email = binding.txtProfileEmail.getText().toString();
+//        if (UItools.validateEmail(new_email)) {
+//            Objects.requireNonNull(mAuth.getCurrentUser()).updateEmail(new_email)
+//                    .addOnCompleteListener(task -> {
+//                        if (task.isSuccessful()) {
+//                            UItools.toast(requireActivity(), getString(R.string.profile_suc_email));
+//                            Log.i("Dumb", "OK");
+//                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+//                            DocumentReference userRef = db.collection("users").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+//
+//                            userRef
+//                                    .update("email",new_email)
+//                                    .addOnSuccessListener(aVoid -> {
+//                                        Log.i("mauth", mAuth.getCurrentUser().getUid());
+//                                        UItools.toast(requireActivity(), "Thay doi thanh cong");
+//                                    })
+//                                    .addOnFailureListener(e -> UItools.toast(requireActivity(), getString(R.string.profile_change_email_fail)))
+//                                    .addOnCompleteListener(x ->toggleLoading(false));
+//                        }
+//                        else {
+//                            UItools.toast(requireActivity(), Objects.requireNonNull(Objects.requireNonNull(task.getException()).getMessage()));
+//                            Log.i("Im dead", Objects.requireNonNull(Objects.requireNonNull(task.getException()).getMessage()));
+//                        }
+//                    });
+//        } else {
+//            UItools.toast(requireActivity(), getString(R.string.profile_email_error));
+//        }
+//    }
 }

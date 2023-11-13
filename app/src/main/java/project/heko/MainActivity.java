@@ -162,8 +162,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, LoginActivity.class);
                 loginLauncher.launch(intent);
             } else {
-                //TODO user profile page
-                Toast.makeText(this, "Profile page underdevelopment", Toast.LENGTH_SHORT).show();
+
+//                Toast.makeText(this, "Profile page underdevelopment", Toast.LENGTH_SHORT).show();
                 DrawerLayout mDrawerLayout = (DrawerLayout) binding.drawerLayout;
                 mDrawerLayout.closeDrawers();
                 navController.navigate(R.id.profileFragment);

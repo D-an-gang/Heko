@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "607857336528",
+    "firebase_url": "https://heko-a6b88-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "heko-a6b88",
     "storage_bucket": "heko-a6b88.appspot.com"
   },
@@ -12,7 +13,20 @@
           "package_name": "project.heko"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "607857336528-eln5gmalsc5je6c07sokmi1d2jcqk0gs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "project.heko",
+            "certificate_hash": "735c46557503398f36dd57162d25b25d36e211f0"
+          }
+        },
+        {
+          "client_id": "607857336528-7f43j95krhq2gkujm014o83d7qol8sp5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCcS7eMYkKVwxiFNpMnqZjwhTWr_ECNnWM"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "607857336528-7f43j95krhq2gkujm014o83d7qol8sp5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
