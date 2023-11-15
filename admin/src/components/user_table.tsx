@@ -1,9 +1,9 @@
+import { CSSProperties } from "react"
 import { User } from "../models/user"
 
 const UserTable = ({ data }: { data: User[] }) => {
-    console.table(data);
     return <>
-        <table className="table table-hover">
+        <table className="table table-hover" style={style}>
             <thead>
                 <tr>
                     <th scope="col">STT</th>
@@ -14,7 +14,7 @@ const UserTable = ({ data }: { data: User[] }) => {
             </thead>
             <tbody>{
                 data.map((item: User) =>
-                    <tr>
+                    <tr key={item.id}>
                         <td className="counterCell"></td>
                         <td>{item.email}</td>
                         <td>{item.username}</td>
@@ -28,3 +28,7 @@ const UserTable = ({ data }: { data: User[] }) => {
 
 }
 export default UserTable
+
+const style:CSSProperties={
+    textAlign: "left" 
+}

@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import {
@@ -8,6 +7,8 @@ import {
 import ErrorPage from './error-page.tsx';
 import App from './App.tsx';
 import Users from './routes/users.tsx';
+import Books from './routes/books.tsx';
+import Book from './routes/book_info.tsx';
 
 const router = createBrowserRouter([
   {
@@ -17,11 +18,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "users",
-        element: <><Users/></>
+        element: <><Users /></>
       },
       {
         path: "books",
-        element: <></>
+        element: <Books></Books>
       },
       {
         path: "books/create",
@@ -29,10 +30,12 @@ const router = createBrowserRouter([
       },
       {
         path: "books/:id",
-        element: <></>
+        // TODO create book info page
+        element: <Book/>
       },
       {
         path: "chap/:id",
+
         element: <></>
       },
       {
@@ -45,7 +48,5 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>,
+  <RouterProvider router={router} />
 )
