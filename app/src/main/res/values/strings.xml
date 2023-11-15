@@ -3,7 +3,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">User</string>
-    <string name="nav_header_subtitle"></string>
+<!--    <string name="nav_header_subtitle"></string>-->
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
@@ -45,7 +45,32 @@
     <string name="logout">Đăng xuất</string>
     <string name="profile_header_title">Your profile</string>
 
-<!--    FIREBASE communication strings-->
+<!--    Fragment Profile-->
+    <string name="profile_username">Tên tài khoản :</string>
+    <string name="user_detail">Thông tin cá nhân</string>
+    <string name="profile_email">Email :</string>
+    <string name="profile_btn_password">Thay đổi mật khẩu</string>
+    <string name="profile_btn_update">Chỉnh sửa</string>
+    <string name="profile_email_hint">Nhập email mới</string>
+    <string name="profile_user_hint">Nhập tên tài khoản mới</string>
     <string name="fb_get_failed">Không thể lấy dữ liệu từ máy chủ</string>
+    <string name="profile_suc_email">Email cập nhật thành công</string>
+    <string name="profile_email_error">Email không hợp lệ</string>
+    <string name="profile_change_email_fail">Thay đổi email không thành công</string>
+    <string name="profile_email_sent">Đã gửi mail, vui lòng kiểm tra thư</string>
+    <string name="profile_ok">OK</string>
+    <string name="profile_cancel">Cancel</string>
+    <string name="profile_confirm">Xác nhận thay đổi thông tin</string>
+    <string name="profile_aleart">Thông báo!</string>
+    <string name="profile_success_change_username">Thay đổi tên tài khoản thành công</string>
+    <string name="profile_update_fail">Cập nhật không thành công</string>
+    <string name="dialog_update">OK</string>
+    <string name="dialog_cancel">Hủy</string>
+<!--    FIREBASE communication strings-->
+
+    <string name="username_hint">Tên tài khoản mới</string>
+    <string name="profile_username_null">Vui lòng không để trống tên tài khoản</string>
+    <string name="profile_title_update">Cập nhật tên tài khoản</string>
+
 
 </resources>
