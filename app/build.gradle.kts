@@ -56,4 +56,6 @@ dependencies {
     implementation("com.vanniktech:android-image-cropper:4.5.0")
     implementation("com.google.firebase:firebase-storage")
     implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation("com.github.colourmoon:readmore-textview:v1.0.2")
+    implementation("io.github.kozemirov:readmoretextview:latest.release.here")
 }

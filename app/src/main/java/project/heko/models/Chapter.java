@@ -1,16 +1,18 @@
 package project.heko.models;
 
+import com.google.firebase.Timestamp;
+
 import java.util.Date;
 
 public class Chapter {
     private String book_id;
     private String content;
-    private Date create_at;
+    private Timestamp create_at;
     private String id;
     private String title;
     private String volume_id;
 
-    public Chapter(String book_id, String content, Date create_at, String id, String title, String volume_id) {
+    public Chapter(String book_id, String content, Timestamp create_at, String id, String title, String volume_id) {
         this.book_id = book_id;
         this.content = content;
         this.create_at = create_at;
@@ -44,11 +46,11 @@ public class Chapter {
         this.content = content;
     }
 
-    public Date getCreate_at() {
+    public Timestamp getCreate_at() {
         return create_at;
     }
 
-    public void setCreate_at(Date create_at) {
+    public void setCreate_at(Timestamp create_at) {
         this.create_at = create_at;
     }
 
