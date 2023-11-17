@@ -12,4 +12,5 @@
     <color name="secondary_alt">#246987</color>
     <color name="trans">#00000000</color>
     <color name="gray">#A9A9A9</color>
+    <color name="slight_gray">#eceeef</color>
 </resources>
