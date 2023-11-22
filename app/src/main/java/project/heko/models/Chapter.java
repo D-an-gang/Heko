@@ -1,39 +1,26 @@
 package project.heko.models;
 
+import android.util.Log;
+
+import com.google.firebase.Timestamp;
+
 import java.util.Date;
 
 public class Chapter {
-    private String book_id;
     private String content;
-    private Date create_at;
-    private String id;
+    private Timestamp create_at;
     private String title;
-    private String volume_id;
 
-    public Chapter(String book_id, String content, Date create_at, String id, String title, String volume_id) {
-        this.book_id = book_id;
+    public Chapter(String content, Timestamp create_at, String title) {
         this.content = content;
         this.create_at = create_at;
-        this.id = id;
         this.title = title;
-        this.volume_id = volume_id;
     }
 
     public Chapter() {
-        this.book_id = null;
-        this.content = null;
+        this.content = "";
         this.create_at = null;
-        this.id = null;
-        this.title = null;
-        this.volume_id = null;
-    }
-
-    public String getBook_id() {
-        return book_id;
-    }
-
-    public void setBook_id(String book_id) {
-        this.book_id = book_id;
+        this.title = "";
     }
 
     public String getContent() {
@@ -44,20 +31,12 @@ public class Chapter {
         this.content = content;
     }
 
-    public Date getCreate_at() {
+    public Timestamp getCreate_at() {
         return create_at;
     }
 
-    public void setCreate_at(Date create_at) {
+    public void setCreate_at(Timestamp create_at) {
         this.create_at = create_at;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -66,14 +45,6 @@ public class Chapter {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getVolume_id() {
-        return volume_id;
-    }
-
-    public void setVolume_id(String volume_id) {
-        this.volume_id = volume_id;
     }
 
 }

@@ -13,4 +13,6 @@
     <color name="trans">#00000000</color>
     <color name="gray">#A9A9A9</color>
     <color name="slight_gray">#eceeef</color>
+    <color name="background_color">#fff</color>
+    <color name="gray_2">#b6b8b6</color>
 </resources>
