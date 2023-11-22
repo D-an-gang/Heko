@@ -30,7 +30,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     RecyclerView recyclerView;
     HomePageRecycleAdapter recyclerViewAdapter;
-    ArrayList<HomePreviewDto> rowsArrayList = new ArrayList<>();
+    ArrayList<HomePreviewDto> rowsArrayList;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     boolean isLoading = false;
 
@@ -41,37 +41,42 @@ public class HomeFragment extends Fragment {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
         final TextView textView = binding.textHome;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        rowsArrayList = new ArrayList<>();
         return root;
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        recyclerView = binding.recyclerView;
         populateData();
         initAdapter();
         initScrollListener();
     }
+
     private void populateData() {
-      //TODO fetch data
+        //TODO fetch data
         Query ref = db.collection("books").orderBy("last_update", Query.Direction.DESCENDING).limit(PAGE_SIZE);
         ref.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()){
-                 for (DocumentSnapshot x : task.getResult()){
-                     HomePreviewDto item = x.toObject(HomePreviewDto.class);
-                     rowsArrayList.add(item);
-                 }
+            if (task.isSuccessful()) {
+                for (DocumentSnapshot x : task.getResult()) {
+                    HomePreviewDto item = x.toObject(HomePreviewDto.class);
+//                    HomePreviewDto item = new HomePreviewDto(x.getString("author"), x.getString("book_cover"), x.get);
+                    rowsArrayList.add(item);
+                }
             }
         });
 
     }
-    private void initAdapter() {
 
+    private void initAdapter() {
         recyclerViewAdapter = new HomePageRecycleAdapter(rowsArrayList);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setHasFixedSize(true);
     }
+
     private void initScrollListener() {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -114,6 +119,7 @@ public class HomeFragment extends Fragment {
         recyclerViewAdapter.notifyItemRangeInserted(scrollPosition, PAGE_SIZE - 1);
         isLoading = false;
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

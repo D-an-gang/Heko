@@ -15,6 +15,7 @@ public class HomePreviewDto extends Book {
     }
 
     public HomePreviewDto() {
+        super();
         this.latest_vol = "";
         this.latest_chap = "";
     }

@@ -24,6 +24,7 @@ public class HomePageRecycleAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public List<HomePreviewDto> mItemList;
 
     public HomePageRecycleAdapter(List<HomePreviewDto> itemList) {
+        super();
         mItemList = itemList;
     }
 
