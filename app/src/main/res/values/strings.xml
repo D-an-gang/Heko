@@ -45,7 +45,7 @@
     <string name="logout">Đăng xuất</string>
     <string name="profile_header_title">Your profile</string>
 
-<!--    Fragment Profile-->
+    <!--    Fragment Profile-->
     <string name="profile_username">Tên tài khoản :</string>
     <string name="user_detail">Thông tin cá nhân</string>
     <string name="profile_email">Email :</string>
@@ -66,17 +66,20 @@
     <string name="profile_update_fail">Cập nhật không thành công</string>
     <string name="dialog_update">OK</string>
     <string name="dialog_cancel">Hủy</string>
-<!--    FIREBASE communication strings-->
+    <!--    FIREBASE communication strings-->
 
     <string name="username_hint">Tên tài khoản mới</string>
     <string name="profile_username_null">Vui lòng không để trống tên tài khoản</string>
     <string name="profile_title_update">Cập nhật tên tài khoản</string>
     <string name="home_notice">Ra mắt Hako Facebook Group\nDonate hỗ trợ Cổng LN Không đăng Manga\n Thử nghiệm thông báo chương mới</string>
     <string name="home_banner">A banner the app</string>
-    <string name="home_book_list">Danh sach truyen</string>
+    <string name="home_book_list">Danh Sách Truyện</string>
     <string name="cover_for_book">cover for book</string>
     <string name="book_title_placeholder">Một truyện gì đó trên Hako--to be added later</string>
     <string name="ln_cover_dec">light novel cover</string>
+    <string name="recycle_item_volume_placeholder">Volume 1</string>
+    <string name="recycle_item_chapter">Web Novel</string>
+    <string name="search_prompt">Tìm kiếm truyện 🔍</string>
 
 
 </resources>

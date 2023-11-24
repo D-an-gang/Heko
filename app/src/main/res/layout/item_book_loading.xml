@@ -3,14 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    android:gravity="center"
     android:orientation="vertical">
 
     <ProgressBar
         android:id="@+id/rv_progressBar"
         android:layout_width="wrap_content"
+        style="?android:attr/progressBarStyle"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:indeterminate="true"
+        android:visibility="visible"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         />

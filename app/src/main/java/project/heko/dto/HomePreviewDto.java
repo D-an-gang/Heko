@@ -7,6 +7,7 @@ import project.heko.models.Book;
 public class HomePreviewDto extends Book {
     private String latest_vol;
     private String latest_chap;
+    public static String NULL_KEY = "KPNMNDMSO";
 
     public HomePreviewDto(String author, String book_cover, int chapters_number, Timestamp create_at, String description, String genre, String id, Timestamp last_update, String title, String latest_vol, String latest_chap) {
         super(author, book_cover, chapters_number, create_at, description, genre, id, last_update, title);
