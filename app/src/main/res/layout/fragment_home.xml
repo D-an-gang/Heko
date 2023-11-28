@@ -25,7 +25,6 @@
                 android:layout_marginHorizontal="25dp"
                 android:autofillHints=""
                 android:background="@drawable/curve_box_gray"
-                android:enabled="false"
                 android:focusable="false"
                 android:hint="@string/search_prompt"
                 android:inputType="text"

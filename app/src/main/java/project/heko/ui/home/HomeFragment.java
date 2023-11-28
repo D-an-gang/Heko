@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,6 +58,10 @@ public class HomeFragment extends Fragment {
         homeViewModel.getBanner().observe(getViewLifecycleOwner(), banner -> {
             binding.textHome.setText(banner.announcement);
             Picasso.get().load(banner.imgUrl).fit().centerCrop().into(binding.banner);
+        });
+        binding.search.setOnClickListener(v -> {
+            Log.i("XX", "Search");
+            Navigation.findNavController(requireView()).navigate(R.id.action_nav_home_to_searchFragment);
         });
         binding.rvProgressBar.setIndeterminate(true);
         homeViewModel.getLoading().observe(getViewLifecycleOwner(), loading -> {
