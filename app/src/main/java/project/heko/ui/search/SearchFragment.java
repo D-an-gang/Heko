@@ -94,4 +94,5 @@ public class SearchFragment extends Fragment {
         adapter = new SearchAdapter(options);
         searchResult.setAdapter(adapter);
     }
+
 }
