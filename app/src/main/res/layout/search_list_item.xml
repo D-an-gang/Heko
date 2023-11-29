@@ -2,21 +2,22 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/home_10dp">
 
     <TextView
         android:id="@+id/search_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="10dp"
+
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
-        android:text="Boiler text"
-        android:textSize="25sp"
+        android:text=""
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,8 +29,8 @@
         android:layout_marginStart="20dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="asdasd"
-        android:textSize="20sp"
+        android:text=""
+        android:textSize="14sp"
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_title" />

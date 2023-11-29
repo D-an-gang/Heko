@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment {
         });
         binding.search.setOnClickListener(v -> {
             Log.i("XX", "Search");
-            Navigation.findNavController(requireView()).navigate(R.id.action_nav_home_to_searchFragment);
+            Navigation.findNavController(requireView()).navigate(R.id.searchFragment);
         });
         binding.rvProgressBar.setIndeterminate(true);
         homeViewModel.getLoading().observe(getViewLifecycleOwner(), loading -> {
@@ -74,6 +74,7 @@ public class HomeFragment extends Fragment {
         homeViewModel.getLoading().setValue(false);
         populateData();
         initHome(homeViewModel);
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -127,15 +128,14 @@ public class HomeFragment extends Fragment {
     }
 
     private void initScrollListener() {
-
         binding.scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
+            if (binding == null)
+                return;
             View view = binding.scrollView.getChildAt(binding.scrollView.getChildCount() - 1);
             int diff = (view.getBottom() - (binding.scrollView.getHeight() + binding.scrollView.getScrollY()));
-            if (diff == 0 && Boolean.FALSE.equals(homeViewModel.getLoading().getValue())) {
+            if (diff == 0 && Boolean.FALSE.equals(homeViewModel.getLoading().getValue()))
                 loadMore();
-            }
         });
-
     }
 
     private void loadMore() {

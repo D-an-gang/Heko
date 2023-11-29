@@ -34,31 +34,44 @@ public class SearchFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentSearchBinding.inflate(inflater, container, false);
         db = FirebaseFirestore.getInstance();
-        query = db.collection("_search").whereGreaterThanOrEqualTo("key", "").orderBy("key", Query.Direction.DESCENDING);
         return binding.getRoot();
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        SearchView searchView = binding.searchBar;
         searchResult = binding.searchRes;
         searchResult.setLayoutManager(new LinearLayoutManager(getContext()));
         initAdapter();
-
         viewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(SearchQueryModel.class);
         viewModel.getQuery().observe(getViewLifecycleOwner(), query -> {
             adapter.stopListening();
             this.query = query;
-            options = new FirestoreRecyclerOptions.Builder<SearchResult>().setQuery(query, SearchResult.class).build();
+            options = new FirestoreRecyclerOptions.Builder<SearchResult>().setQuery(query, SearchResult.class).setLifecycleOwner(getViewLifecycleOwner()).build();
             adapter.updateOptions(options);
             adapter.startListening();
+        });
+        initSearch();
+    }
+
+    private void initSearch() {
+        SearchView searchView = binding.searchBar;
+
+        searchView.findViewById(androidx.appcompat.R.id.search_close_btn).setOnClickListener(view1 -> {
+            if (searchView.getQuery().length() == 0) {
+                searchView.setIconified(true);
+            } else {
+                viewModel.getQuery().setValue(db.collection("_search").orderBy("key", Query.Direction.DESCENDING));
+                searchView.setQuery("", false);
+            }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Query target = db.collection("_search").whereGreaterThanOrEqualTo("key", query).orderBy("key");
+                query = query.toLowerCase();
+                Query target = db.collection("_search")
+                        .orderBy("key")
+                        .startAt(query).endAt(query + "\uf8ff");
                 viewModel.getQuery().setValue(target);
                 return false;
             }
@@ -67,37 +80,18 @@ public class SearchFragment extends Fragment {
             public boolean onQueryTextChange(String newText) {
                 return false;
             }
-        });
-    }
 
+
+        });
+
+        searchView.setIconifiedByDefault(false);
+        searchView.requestFocus();
+    }
 
     private void initAdapter() {
-        options = new FirestoreRecyclerOptions.Builder<SearchResult>().setQuery(query, SearchResult.class).build();
+        query = db.collection("_search").whereGreaterThanOrEqualTo("key", "").orderBy("key", Query.Direction.DESCENDING);
+        options = new FirestoreRecyclerOptions.Builder<SearchResult>().setQuery(query, SearchResult.class).setLifecycleOwner(getViewLifecycleOwner()).build();
         adapter = new SearchAdapter(options);
         searchResult.setAdapter(adapter);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        adapter.stopListening();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        adapter.stopListening();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        adapter.startListening();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        adapter.stopListening();
     }
 }
