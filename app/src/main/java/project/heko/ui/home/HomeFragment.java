@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,6 +59,10 @@ public class HomeFragment extends Fragment {
             binding.textHome.setText(banner.announcement);
             Picasso.get().load(banner.imgUrl).fit().centerCrop().into(binding.banner);
         });
+        binding.search.setOnClickListener(v -> {
+            Log.i("XX", "Search");
+            Navigation.findNavController(requireView()).navigate(R.id.searchFragment);
+        });
         binding.rvProgressBar.setIndeterminate(true);
         homeViewModel.getLoading().observe(getViewLifecycleOwner(), loading -> {
             if (loading) {
@@ -69,6 +74,7 @@ public class HomeFragment extends Fragment {
         homeViewModel.getLoading().setValue(false);
         populateData();
         initHome(homeViewModel);
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -122,15 +128,14 @@ public class HomeFragment extends Fragment {
     }
 
     private void initScrollListener() {
-
         binding.scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
+            if (binding == null)
+                return;
             View view = binding.scrollView.getChildAt(binding.scrollView.getChildCount() - 1);
             int diff = (view.getBottom() - (binding.scrollView.getHeight() + binding.scrollView.getScrollY()));
-            if (diff == 0 && Boolean.FALSE.equals(homeViewModel.getLoading().getValue())) {
+            if (diff == 0 && Boolean.FALSE.equals(homeViewModel.getLoading().getValue()))
                 loadMore();
-            }
         });
-
     }
 
     private void loadMore() {
