@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/home_10dp"
         android:layout_marginEnd="@dimen/home_8dp"
+        android:overScrollMode="never"
         android:paddingTop="5dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout

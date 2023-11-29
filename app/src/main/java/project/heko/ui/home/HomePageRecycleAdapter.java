@@ -60,7 +60,7 @@ public class HomePageRecycleAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemViewType(int position) {
-        return mItemList.get(position).getId().equals(HomePreviewDto.NULL_KEY) ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
+        return mItemList.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
 
@@ -91,7 +91,7 @@ public class HomePageRecycleAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
-    private void showLoadingView(LoadingViewHolder viewHolder, int position) {
+    private void showLoadingView(LoadingViewHolder viewHolder, int ignoredPosition) {
         //ProgressBar would be displayed
         viewHolder.progressBar.setIndeterminate(true);
         viewHolder.progressBar.setVisibility(View.VISIBLE);
