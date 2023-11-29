@@ -5,16 +5,20 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import project.heko.models.Book;
+import project.heko.models.Chapter;
+import project.heko.models.Volume;
 
 
 public class LnViewModel extends ViewModel {
 
     private MutableLiveData<Book> mBook = new MutableLiveData<>();
-    private MutableLiveData<Boolean> mId = new MutableLiveData<>();
+    private MutableLiveData<Volume> mVolume = new MutableLiveData<>();
+    private MutableLiveData<Chapter> mChapter = new MutableLiveData<>();
 
     public LnViewModel() {
+        mVolume.setValue(new Volume());
+        mChapter.setValue(new Chapter());
         mBook.setValue(new Book());
-        mId.setValue(false);
     }
     public MutableLiveData<Book> getBook(){
         if (mBook == null){
@@ -23,12 +27,19 @@ public class LnViewModel extends ViewModel {
         }
         return mBook;
     }
-    public MutableLiveData<Boolean> getId(){
-        if (mId == null){
-            mId = new MutableLiveData<>();
-            mId.setValue(false);
-        }
-        return mId;
-    }
 
+    public MutableLiveData<Volume> getVolume(){
+        if (mVolume == null){
+            mVolume = new MutableLiveData<>();
+            mVolume.setValue(new Volume());
+        }
+        return mVolume;
+    }
+    public MutableLiveData<Chapter> getChapter(){
+        if (mChapter == null){
+            mChapter = new MutableLiveData<>();
+            mChapter.setValue(new Chapter());
+        }
+        return mChapter;
+    }
 }
