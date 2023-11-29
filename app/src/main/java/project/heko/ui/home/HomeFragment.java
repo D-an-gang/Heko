@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment {
         });
         binding.search.setOnClickListener(v -> {
             Log.i("XX", "Search");
-            Navigation.findNavController(requireView()).navigate(R.id.searchFragment);
+            Navigation.findNavController(requireView()).navigate(R.id.action_nav_home_to_searchFragment);
         });
         binding.rvProgressBar.setIndeterminate(true);
         homeViewModel.getLoading().observe(getViewLifecycleOwner(), loading -> {
@@ -142,7 +142,7 @@ public class HomeFragment extends Fragment {
         boolean debounce = false;
         if (cursor != null) {
             Log.i("XX", "before size: " + rowsArrayList.size());
-            if (rowsArrayList.get(rowsArrayList.size() - 1) != null) {
+            if (rowsArrayList.size() != 0 && rowsArrayList.get(rowsArrayList.size() - 1) != null) {
                 rowsArrayList.add(null);
                 recyclerViewAdapter.notifyItemInserted(rowsArrayList.size() - 1);
                 debounce = true;
