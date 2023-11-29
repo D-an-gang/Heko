@@ -1,24 +1,33 @@
 package project.heko.ui.gallery;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
+import java.util.zip.Inflater;
 
 import project.heko.R;
+import project.heko.databinding.LayoutRowChapterBinding;
+import project.heko.databinding.LayoutRowVolumeBinding;
+import project.heko.databinding.LightnovelDetailBinding;
+import project.heko.dto.LightNovelDto;
+import project.heko.dto.LnDto;
 import project.heko.models.Chapter;
 import project.heko.models.Volume;
 
 public class ExpandListViewAdapter extends BaseExpandableListAdapter {
-    private final ArrayList<Volume> mListGroup;
-    private final TreeMap<Volume,ArrayList<Chapter>> mListItem;
+    private ArrayList<Volume> mListGroup;
+    private Map<Volume,ArrayList<Chapter>> mListItem;
 
-    public ExpandListViewAdapter(ArrayList<Volume> list,TreeMap<Volume,ArrayList<Chapter>> item) {
+    public ExpandListViewAdapter(ArrayList<Volume> list,Map<Volume,ArrayList<Chapter>> item) {
         this.mListGroup = list;
         this.mListItem = item;
     }
