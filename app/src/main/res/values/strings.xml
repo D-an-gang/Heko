@@ -3,7 +3,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">User</string>
-    <string name="nav_header_subtitle" />
+    <string name="nav_header_subtitle"></string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
@@ -45,7 +45,7 @@
     <string name="logout">Đăng xuất</string>
     <string name="profile_header_title">Your profile</string>
 
-    <!--    Fragment Profile-->
+<!--    Fragment Profile-->
     <string name="profile_username">Tên tài khoản :</string>
     <string name="user_detail">Thông tin cá nhân</string>
     <string name="profile_email">Email :</string>
@@ -66,7 +66,7 @@
     <string name="profile_update_fail">Cập nhật không thành công</string>
     <string name="dialog_update">OK</string>
     <string name="dialog_cancel">Hủy</string>
-    <!--    FIREBASE communication strings-->
+<!--    FIREBASE communication strings-->
 
     <string name="username_hint">Tên tài khoản mới</string>
     <string name="profile_username_null">Vui lòng không để trống tên tài khoản</string>
@@ -75,22 +75,8 @@
     <string name="home_banner">A banner the app</string>
     <string name="home_book_list">Danh sach truyen</string>
     <string name="cover_for_book">cover for book</string>
-    <string name="book_title_placeholder">Một truyện gì đó trên Hako-to be added later</string>
+    <string name="book_title_placeholder">Một truyện gì đó trên Hako--to be added later</string>
     <string name="ln_cover_dec">light novel cover</string>
-    <!-- Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="ln_list_volume">Danh sách chương</string>
-    <string name="ln_des">Nội dung</string>
-    <string name="icon_arrow_down">icon arrow down</string>
-    <string name="author_header">Tác giả :</string>
-    <string name="follow_light_novel">Follow Light Novel</string>
-    <string name="go_to_list_volume">Go to list volume</string>
-    <string name="last_update">Last update</string>
-    <string name="list_volume_txt">Danh sách chương</string>
-    <string name="tab_info">Thông tin truyện</string>
-    <string name="tab_volume">Danh sách chương</string>
-    <string name="title_follow">Theo dõi truyện</string>
-    <string name="title_volume">Mục lục</string>
 
 
 </resources>

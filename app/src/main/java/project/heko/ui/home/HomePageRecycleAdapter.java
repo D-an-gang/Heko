@@ -1,5 +1,6 @@
 package project.heko.ui.home;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +18,14 @@ import java.util.List;
 import project.heko.R;
 import project.heko.dto.HomePreviewDto;
 
-public class HomePageRecycleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class HomePageRecycleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
 
     public List<HomePreviewDto> mItemList;
 
     public HomePageRecycleAdapter(List<HomePreviewDto> itemList) {
+        super();
         mItemList = itemList;
     }
 
@@ -43,9 +45,9 @@ public class HomePageRecycleAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
 
         if (viewHolder instanceof ItemViewHolder) {
-
             populateItemRows((ItemViewHolder) viewHolder, position);
         } else if (viewHolder instanceof LoadingViewHolder) {
+            Log.i("XX", "Adapter Loading");
             showLoadingView((LoadingViewHolder) viewHolder, position);
         }
 
@@ -89,17 +91,23 @@ public class HomePageRecycleAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
-    private void showLoadingView(LoadingViewHolder viewHolder, int position) {
+    private void showLoadingView(LoadingViewHolder viewHolder, int ignoredPosition) {
         //ProgressBar would be displayed
-
+        viewHolder.progressBar.setIndeterminate(true);
+        viewHolder.progressBar.setVisibility(View.VISIBLE);
     }
 
     private void populateItemRows(ItemViewHolder viewHolder, int position) {
         HomePreviewDto item = mItemList.get(position);
         viewHolder.title.setText(item.getTitle());
-        viewHolder.latest_vol.setText(item.getLatest_vol());
-        viewHolder.latest_chap.setText(item.getLatest_chap());
-        Picasso.get().load(item.getBook_cover()).into(viewHolder.cover);
+        if (!item.getLatest_vol().equals("") || item.getLatest_vol() == null)
+            viewHolder.latest_vol.setText(item.getLatest_vol());
+        if (!item.getLatest_chap().equals("") || item.getLatest_chap() == null)
+            viewHolder.latest_chap.setText(item.getLatest_chap());
+        if (!item.getBook_cover().equals("") || item.getBook_cover() == null)
+            Picasso.get().load(item.getBook_cover())
+                    .error(R.drawable.nocover)
+                    .into(viewHolder.cover);
     }
 
 
