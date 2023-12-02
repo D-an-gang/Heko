@@ -90,6 +90,7 @@ public class HomeFragment extends Fragment {
                 cursor = task.getResult().getDocuments().get(task.getResult().size() - 1);
                 for (DocumentSnapshot x : task.getResult()) {
                     HomePreviewDto item = x.toObject(HomePreviewDto.class);
+                    Log.i("XX", ""+item.getId());
                     x.getReference().collection("volume").orderBy("create_at", Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(task1 -> {
                         if (!task1.isSuccessful()) {
                             rowsArrayList.add(item);
@@ -118,7 +119,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void initAdapter() {
-        recyclerViewAdapter = new HomePageRecycleAdapter(rowsArrayList);
+        recyclerViewAdapter = new HomePageRecycleAdapter(rowsArrayList, Navigation.findNavController(requireView()));
         GridLayoutManager grid = new GridLayoutManager(requireActivity(), 2);
 
         recyclerView.setLayoutManager(grid);
@@ -176,7 +177,6 @@ public class HomeFragment extends Fragment {
                                                 }
                                                 rowsArrayList.add(item);
                                                 recyclerViewAdapter.notifyItemRangeInserted(recyclerViewAdapter.getItemCount(), rowsArrayList.size() - 1);
-//                                                recyclerViewAdapter.notifyDataSetChanged();
                                                 homeViewModel.getLoading().setValue(false);
                                             });
                                         }

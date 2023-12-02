@@ -16,12 +16,19 @@
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
              />
+        <action
+            android:id="@+id/home_to_book"
+            app:destination="@id/nav_gallery"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            />
     </fragment>
 
     <fragment
         android:id="@+id/nav_gallery"
         android:name="project.heko.ui.gallery.LnFragment"
         android:label="@string/menu_gallery"
+        app:argType="string"
         tools:layout="@layout/light_novel_info" />
 
     <fragment

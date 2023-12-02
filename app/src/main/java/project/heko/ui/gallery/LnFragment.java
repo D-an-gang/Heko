@@ -1,6 +1,7 @@
 package project.heko.ui.gallery;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,13 +9,16 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.Objects;
 
+import project.heko.R;
 import project.heko.databinding.LightNovelInfoBinding;
+import project.heko.helpers.UItools;
 
 public class LnFragment extends Fragment {
 
@@ -29,7 +33,14 @@ public class LnFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        LnViewPagerAdapter lnViewPagerAdapter = new LnViewPagerAdapter(this, "O5GqxRrBXPmNw15lyfQG");
+        String id = "O5GqxRrBXPmNw15lyfQG";
+        //TODO check for id
+//        if (getArguments().getString("id") == null) {
+//            UItools.toast(requireActivity(), getString(R.string.error_load_book));
+//            Navigation.findNavController(requireView()).popBackStack(R.id.nav_home, false);
+//        }
+//        Log.i("XX", "Pass: " + getArguments().getString("id"));
+        LnViewPagerAdapter lnViewPagerAdapter = new LnViewPagerAdapter(this, id);
         binding.lnViewpager.setAdapter(lnViewPagerAdapter);
         binding.lnTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -50,20 +61,22 @@ public class LnFragment extends Fragment {
         binding.lnViewpager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
-                if (position >1){
+                if (position > 1) {
                     position = 0;
                 }
-                    super.onPageSelected(position);
-                    Objects.requireNonNull(binding.lnTabs.getTabAt(position)).select();
+                super.onPageSelected(position);
+                Objects.requireNonNull(binding.lnTabs.getTabAt(position)).select();
             }
         });
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
-    public void setFragmentVolume(){
+
+    public void setFragmentVolume() {
         binding.lnViewpager.setCurrentItem(1);
     }
 }

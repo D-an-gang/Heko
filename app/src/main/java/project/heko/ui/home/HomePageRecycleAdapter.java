@@ -1,5 +1,6 @@
 package project.heko.ui.home;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -17,16 +19,18 @@ import java.util.List;
 
 import project.heko.R;
 import project.heko.dto.HomePreviewDto;
+import project.heko.models.Book;
 
 public class HomePageRecycleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
-
+    private final NavController controller;
     public List<HomePreviewDto> mItemList;
 
-    public HomePageRecycleAdapter(List<HomePreviewDto> itemList) {
+    public HomePageRecycleAdapter(List<HomePreviewDto> itemList, NavController controller) {
         super();
         mItemList = itemList;
+        this.controller = controller;
     }
 
     @NonNull
@@ -34,7 +38,16 @@ public class HomePageRecycleAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_ITEM) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_book_row, parent, false);
-            return new ItemViewHolder(view);
+            RecyclerView.ViewHolder item = new ItemViewHolder(view);
+            item.itemView.setOnClickListener(v -> {
+                Book book = mItemList.get(item.getBindingAdapterPosition());
+                Log.i("XX", "ID: " + book.getId());
+                Bundle payload = new Bundle();
+                payload.putString("id", book.getId());
+                //TODO uncomment below
+                //                controller.navigate(R.id.home_to_book, payload);
+            });
+            return item;
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_book_loading, parent, false);
             return new LoadingViewHolder(view);
@@ -79,6 +92,7 @@ public class HomePageRecycleAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             latest_chap = itemView.findViewById(R.id.rv_latest_chap);
             latest_vol = itemView.findViewById(R.id.rv_latest_vol);
         }
+
     }
 
     private class LoadingViewHolder extends RecyclerView.ViewHolder {

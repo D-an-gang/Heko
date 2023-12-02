@@ -95,4 +95,5 @@
     <string name="tab_volume">Danh sách chương</string>
     <string name="title_follow">Theo dõi truyện</string>
     <string name="title_volume">Mục lục</string>
+    <string name="error_load_book">Không thể tải truyện</string>
 </resources>
