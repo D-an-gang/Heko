@@ -95,4 +95,7 @@
     <string name="tab_volume">Danh sách chương</string>
     <string name="title_follow">Theo dõi truyện</string>
     <string name="title_volume">Mục lục</string>
+    <string name="text_change_avatar">Thay đổi ảnh đại diện</string>
+    <string name="text_change_password">Thay đổi mật khẩu</string>
+    <string name="text_change_user_info">Thay đổi thông tin tài khoản</string>
 </resources>

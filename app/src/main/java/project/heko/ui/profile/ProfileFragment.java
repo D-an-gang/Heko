@@ -72,7 +72,6 @@ public class ProfileFragment extends Fragment {
             binding.txtProfileEmail.setText(user.getEmail());
         });
         //hide user panel first
-        binding.userPanel.setVisibility(View.GONE);
         //get user data
         getUser();
         //init logout btn
@@ -125,7 +124,6 @@ public class ProfileFragment extends Fragment {
                             mViewModel.getUser().setValue(res);
                             old_username = res.getUsername();
                             old_email = res.getEmail();
-                            binding.userPanel.setVisibility(View.VISIBLE);
                         } catch (NullPointerException e) {
                             Log.i("fetch failed", Objects.requireNonNull(e.getMessage()));
                             cancelFragment(R.string.error_user_not_found, true);
@@ -145,8 +143,9 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     private void updatePasswordListener(){
-        binding.btnUpdatePassword.setOnClickListener(v -> {
+        binding.textChangePassword.setOnClickListener(v -> {
                     toggleLoading(true);
                     FirebaseAuth.getInstance().sendPasswordResetEmail(old_email)
                             .addOnCompleteListener(task -> {
@@ -154,35 +153,16 @@ public class ProfileFragment extends Fragment {
                                     Toast.makeText(getActivity(), R.string.profile_email_sent, Toast.LENGTH_SHORT).show();
                                 }
                             });
+                    binding.textChangePassword.setTextColor(R.color.teal_700);
+                    binding.icPassword.setColorFilter(R.color.teal_700);
                     toggleLoading(false);
                 }
                 );
     }
         @SuppressLint("InflateParams")
         private void updateProfileListener() {
-        binding.btnUpdate.setOnClickListener(v -> {
+        binding.textChangeInfo.setOnClickListener(v -> {
                 toggleLoading(true);
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//// Add the buttons
-//
-//                    builder.setTitle(R.string.profile_aleart)
-//                            .setMessage(R.string.profile_confirm)
-//                            .setPositiveButton(R.string.profile_ok, (dialog, id) -> {
-//                        // User clicked OK button
-//                        if (!old_username.equals(binding.txtProfileUsername.getText().toString())) {
-//                            FirebaseFirestore db = FirebaseFirestore.getInstance();
-//                            DocumentReference userRef = db.collection("users").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
-//
-//                            userRef
-//                                    .update("username", binding.txtProfileUsername.getText().toString())
-//                                    .addOnSuccessListener(aVoid -> UItools.toast(requireActivity(), getString(R.string.profile_success_change_username)))
-//                                    .addOnFailureListener(e -> UItools.toast(requireActivity(), getString(R.string.profile_update_fail)));
-//                        }
-//                        else{
-//                            toggleLoading(false);
-//                        }
-//                    });
-//                  builder.setNegativeButton(R.string.profile_cancel, (dialog, id) -> dialog.cancel()).show();
                     final Dialog dialog = new Dialog(requireActivity());
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog.setContentView(R.layout.layout_dialog_username);
@@ -227,34 +207,4 @@ public class ProfileFragment extends Fragment {
             }
         );
     }
-    //Badtrip
-//    if (!old_email.equals(binding.txtProfileEmail.getText().toString())) {
-//        String new_email = binding.txtProfileEmail.getText().toString();
-//        if (UItools.validateEmail(new_email)) {
-//            Objects.requireNonNull(mAuth.getCurrentUser()).updateEmail(new_email)
-//                    .addOnCompleteListener(task -> {
-//                        if (task.isSuccessful()) {
-//                            UItools.toast(requireActivity(), getString(R.string.profile_suc_email));
-//                            Log.i("Dumb", "OK");
-//                            FirebaseFirestore db = FirebaseFirestore.getInstance();
-//                            DocumentReference userRef = db.collection("users").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
-//
-//                            userRef
-//                                    .update("email",new_email)
-//                                    .addOnSuccessListener(aVoid -> {
-//                                        Log.i("mauth", mAuth.getCurrentUser().getUid());
-//                                        UItools.toast(requireActivity(), "Thay doi thanh cong");
-//                                    })
-//                                    .addOnFailureListener(e -> UItools.toast(requireActivity(), getString(R.string.profile_change_email_fail)))
-//                                    .addOnCompleteListener(x ->toggleLoading(false));
-//                        }
-//                        else {
-//                            UItools.toast(requireActivity(), Objects.requireNonNull(Objects.requireNonNull(task.getException()).getMessage()));
-//                            Log.i("Im dead", Objects.requireNonNull(Objects.requireNonNull(task.getException()).getMessage()));
-//                        }
-//                    });
-//        } else {
-//            UItools.toast(requireActivity(), getString(R.string.profile_email_error));
-//        }
-//    }
 }

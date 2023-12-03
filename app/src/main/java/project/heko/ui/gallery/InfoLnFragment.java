@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -67,21 +68,24 @@ public class InfoLnFragment extends Fragment {
             }
             binding.txtContent.setText(book.getDescription());
         });
-        isFollowed();
-        if(Boolean.TRUE.equals(lnViewModel.getId().getValue())){
-            binding.follow.setImageResource(R.drawable.ic_heart);
+        if(checkLogin()){
+            isFollowed();
+            if(Boolean.TRUE.equals(lnViewModel.getId().getValue())){
+                binding.follow.setImageResource(R.drawable.ic_heart);
+            }
+            else binding.follow.setImageResource(R.drawable.ic_heart_outline);
+            lnViewModel.getId().observe(getViewLifecycleOwner(), aBoolean -> {
+                if(aBoolean){
+                    Follow();
+                }
+                else {
+                    unFollow();
+                }
+            });
+            showFollow();
         }
-        else binding.follow.setImageResource(R.drawable.ic_heart_outline);
-        lnViewModel.getId().observe(getViewLifecycleOwner(), aBoolean -> {
-            if(aBoolean){
-                Follow();
-            }
-            else {
-                unFollow();
-            }
-        });
-        showFollow();
         gotoListVolume();
+
     }
     @Override
     public void onDestroyView() {
@@ -162,13 +166,19 @@ public class InfoLnFragment extends Fragment {
     }
     private void showFollow(){
         binding.follow.setOnClickListener(v -> {
-            if (Boolean.TRUE.equals(lnViewModel.getId().getValue())){
-                lnViewModel.getId().setValue(false);
-                Log.i("Clicked","Unfollow");
+            if(checkLogin()){
+                if (Boolean.TRUE.equals(lnViewModel.getId().getValue())){
+                    lnViewModel.getId().setValue(false);
+                    Log.i("Clicked","Unfollow");
+                }
+                else{
+                    lnViewModel.getId().setValue(true);
+                    Log.i("Clicked", "Follow");
+                }
             }
-            else{
-                lnViewModel.getId().setValue(true);
-                Log.i("Clicked", "Follow");
+            else {
+                Toast.makeText(this.getContext(), "Hãy đăng nhập để theo dõi truyện", Toast.LENGTH_SHORT).show();
+                Log.i("Click", "Check");
             }
         });
     }
@@ -213,6 +223,9 @@ public class InfoLnFragment extends Fragment {
             } else {
                 Log.i("Child", "Loi");
             }
-        })  ;
+        });
+    }
+    private boolean checkLogin(){
+        return mAuth.getCurrentUser() != null;
     }
 }
