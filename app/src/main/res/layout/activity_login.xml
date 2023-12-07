@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
     android:paddingHorizontal="@dimen/login_padding_h"
     android:paddingVertical="@dimen/login_padding_v"
     tools:context=".auth.LoginActivity">
@@ -90,7 +89,7 @@
             android:layout_height="30dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:gravity="right"
+            android:gravity="end"
             android:text="@string/login_signup_link"
             android:textSize="15sp"
             app:layout_constraintRight_toRightOf="parent"
