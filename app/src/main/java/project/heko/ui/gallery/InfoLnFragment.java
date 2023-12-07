@@ -270,7 +270,7 @@ public class InfoLnFragment extends Fragment {
             binding.loader.progressOverlay.setVisibility(View.VISIBLE);
         else{
             Handler handler = new Handler();
-            handler.postDelayed(() -> binding.loader.progressOverlay.setVisibility(View.GONE),1000);
+            handler.postDelayed(() -> binding.loader.progressOverlay.setVisibility(View.GONE),500);
         }
 
     }
