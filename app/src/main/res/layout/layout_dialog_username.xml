@@ -49,7 +49,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             style="?attr/materialButtonOutlinedStyle"
-            app:strokeColor="@color/purple_200"
             android:text="@string/dialog_update"/>
     </LinearLayout>
 </LinearLayout>

@@ -46,4 +46,10 @@
         android:name="project.heko.ui.search.SearchFragment"
         android:label="Search"
         tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/nav_bookshelf"
+        android:name="project.heko.ui.bookShelf.BookShelfFragment"
+        android:label="fragment_book_shelf"
+        tools:layout="@layout/fragment_book_shelf" />
+
 </navigation>

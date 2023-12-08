@@ -1,10 +1,12 @@
 package project.heko.ui.gallery;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,7 +55,7 @@ public class InfoLnFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         db = FirebaseFirestore.getInstance();
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             id = String.valueOf(getArguments().getString("id"));
             Log.i("dona", id);
         }
@@ -62,36 +64,32 @@ public class InfoLnFragment extends Fragment {
             binding.lnTitle.setText(book.getTitle());
             binding.txtLastUpdate.setText(formatDate(book.getLast_update().toDate()));
             binding.txtAuthor.setText(book.getAuthor());
-            if (!book.getBook_cover().equals("")){
+            if (!book.getBook_cover().equals("")) {
                 Picasso.get().load(book.getBook_cover()).into(binding.lnCover);
             }
             binding.txtContent.setText(book.getDescription());
         });
-        isFollowed();
-        if(Boolean.TRUE.equals(lnViewModel.getId().getValue())){
-            binding.follow.setImageResource(R.drawable.ic_heart);
+        //cái này m đang chạy chỉ khi fragment được tạo, nghĩa là n chạy có 1 lần
+        if (checkLogin()) {
+            initFollowService();
+        } else {
+            binding.follow.setImageResource(R.drawable.ic_heart_outline);
         }
-        else binding.follow.setImageResource(R.drawable.ic_heart_outline);
-        lnViewModel.getId().observe(getViewLifecycleOwner(), aBoolean -> {
-            if(aBoolean){
-                Follow();
-            }
-            else {
-                unFollow();
-            }
-        });
-        showFollow();
         gotoListVolume();
+
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
-    private void getBook(){
+
+    private void getBook() {
+        toggleLoading(true);
         db.collection("books")
                 .document(id).get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             Log.d("B", "DocumentSnapshot data: " + document.getData());
@@ -105,84 +103,112 @@ public class InfoLnFragment extends Fragment {
                                 chip.setText(i);
                                 binding.groupGenre.addView(chip);
                             }
+                            toggleLoading(false);
                         } else {
                             Log.d("B", "No such document");
+                            toggleLoading(false);
                         }
                     }
                 });
+
     }
+
     @NonNull
-    private String formatDate(Date date){
+    private String formatDate(Date date) {
         Date currentDate = new Date();
         long difference = currentDate.getTime() - date.getTime();
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(difference);
-        int differenceYears = c.get(Calendar.YEAR)-1970;
+        int differenceYears = c.get(Calendar.YEAR) - 1970;
         int differenceHours = c.get(Calendar.HOUR);
         int differenceMonth = c.get(Calendar.MONTH);
-        int differenceDays = c.get(Calendar.DAY_OF_MONTH)-1;
-        int differenceWeek = (c.get(Calendar.DAY_OF_MONTH)-1)/7;
+        int differenceDays = c.get(Calendar.DAY_OF_MONTH) - 1;
+        int differenceWeek = (c.get(Calendar.DAY_OF_MONTH) - 1) / 7;
         int differenceMinutes = c.get(Calendar.MINUTE);// ** if you use this, change the mDay to (c.get(Calendar.DAY_OF_MONTH)-1)%7
         String dif = differenceYears + "năm";
-        if(differenceYears == 0){
+        if (differenceYears == 0) {
             dif = differenceMonth + " tháng";
-            if(differenceMonth == 0){
+            if (differenceMonth == 0) {
                 dif = differenceWeek + " tuần";
-                if(differenceWeek == 0){
-                    dif = differenceDays +" ngày";
-                    if (differenceDays == 0){
+                if (differenceWeek == 0) {
+                    dif = differenceDays + " ngày";
+                    if (differenceDays == 0) {
                         dif = differenceHours + " giờ";
-                        if(differenceHours == 0){
-                            dif = differenceMinutes +" phút";
+                        if (differenceHours == 0) {
+                            dif = differenceMinutes + " phút";
                         }
                     }
                 }
             }
         }
-        return dif+" trước";
+        return dif + " trước";
     }
-    private void isFollowed(){
+
+    private void isFollowed() {
+
         //AggregateQuery count = db.collection("bookShelf").whereEqualTo("book_id", Objects.requireNonNull(lnViewModel.getBook().getValue()).getId()).whereEqualTo("user_id", Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).count();
-        Query query = db.collection("bookShelf")
-                .whereEqualTo("book_id", id)
-                .whereEqualTo("user_id", Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
-        AggregateQuery countQuery = query.count();
-        countQuery.get(AggregateSource.SERVER).addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
-                AggregateQuerySnapshot snapshot = task.getResult();
-                Log.d("Bien", "Count: " + snapshot.getCount());
-                count = (int) snapshot.getCount();
-                if (count == 0) {
+        if (checkLogin()) {
+            toggleLoading(true);
+            Query query = db.collection("bookShelf")
+                    .whereEqualTo("book_id", id)
+                    .whereEqualTo("user_id", Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+            AggregateQuery countQuery = query.count();
+            countQuery.get(AggregateSource.SERVER).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    AggregateQuerySnapshot snapshot = task.getResult();
+                    Log.d("Bien", "Count: " + snapshot.getCount());
+                    count = (int) snapshot.getCount();
+                    if (count == 0) {
+                        lnViewModel.getId().setValue(false);
+                    } else {
+                        lnViewModel.getId().setValue(true);
+                    }
+                }
+                toggleLoading(false);
+            });
+        }
+    }
+
+    private void showFollow() {
+
+        binding.follow.setOnClickListener(v -> {
+            //nma m da check roi con gi
+            if (checkLogin()) {
+                if (Boolean.TRUE.equals(lnViewModel.getId().getValue())) {
                     lnViewModel.getId().setValue(false);
+                    Log.i("Clicked", "Unfollow");
                 } else {
                     lnViewModel.getId().setValue(true);
+                    Log.i("Clicked", "Follow");
+
                 }
+            } else {
+                binding.follow.setImageResource(R.drawable.ic_heart_outline);
+                Toast.makeText(this.getContext(), "Hãy đăng nhập để theo dõi truyện", Toast.LENGTH_SHORT).show();
+
             }
         });
+
     }
-    private void showFollow(){
-        binding.follow.setOnClickListener(v -> {
-            if (Boolean.TRUE.equals(lnViewModel.getId().getValue())){
-                lnViewModel.getId().setValue(false);
-                Log.i("Clicked","Unfollow");
-            }
-            else{
-                lnViewModel.getId().setValue(true);
-                Log.i("Clicked", "Follow");
-            }
-        });
-    }
-    private void Follow(){
+
+    private void Follow() {
+        toggleLoading(true);
         BookShelf bookShelf = new BookShelf(id, new Timestamp(new Date()), 0, Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
         db.collection("bookShelf")
                 .add(bookShelf)
                 .addOnSuccessListener(documentReference -> {
                     Log.d("Add", "DocumentSnapshot written with ID: " + documentReference.getId());
                     binding.follow.setImageResource(R.drawable.ic_heart);
+                    toggleLoading(false);
                 })
-                .addOnFailureListener(e -> lnViewModel.getId().setValue(false));
+                .addOnFailureListener(e -> {
+                    lnViewModel.getId().setValue(false);
+                    toggleLoading(false);
+                });
     }
-    private void unFollow(){
+
+    private void unFollow() {
+        toggleLoading(true);
         db.collection("bookShelf")
                 .whereEqualTo("book_id", id)
                 .whereEqualTo("user_id", Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
@@ -199,20 +225,59 @@ public class InfoLnFragment extends Fragment {
                                     })
                                     .addOnFailureListener(e -> Log.w("DeleteE", "Error deleting document", e));
                         }
+                        toggleLoading(false);
                     } else {
                         Log.d("GetEr", "Error getting documents: ", task.getException());
+                        toggleLoading(false);
                     }
                 });
     }
-    private void gotoListVolume(){
+
+    private void gotoListVolume() {
         binding.icList.setOnClickListener(v -> {
             if (getParentFragment() != null) {
                 LnFragment parentFragment = (LnFragment) getParentFragment();
                 parentFragment.setFragmentVolume();
-
             } else {
                 Log.i("Child", "Loi");
             }
-        })  ;
+        });
+    }
+
+    private boolean checkLogin() {
+        return mAuth.getCurrentUser() != null;
+    }
+
+    private void initFollowService() {
+        //khoi tao lai follow trong nay khire resume !!!
+        isFollowed();
+        if (checkLogin()) {
+            if (Boolean.TRUE.equals(lnViewModel.getId().getValue())) {
+                binding.follow.setImageResource(R.drawable.ic_heart);
+            } else binding.follow.setImageResource(R.drawable.ic_heart_outline);
+            lnViewModel.getId().observe(getViewLifecycleOwner(), aBoolean -> {
+                if (aBoolean) {
+                    Follow();
+                } else {
+                    unFollow();
+                }
+            });
+        }
+        showFollow();
+    }
+    private void toggleLoading(boolean mode) {
+        if (mode)
+            binding.loader.progressOverlay.setVisibility(View.VISIBLE);
+        else{
+            Handler handler = new Handler();
+            handler.postDelayed(() -> binding.loader.progressOverlay.setVisibility(View.GONE),500);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initFollowService();
     }
 }
