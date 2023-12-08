@@ -4,13 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -23,8 +22,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +29,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
@@ -64,37 +62,42 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         liveDataInit(navigationView);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_logout,R.id.nav_bookshelf)
+                R.id.nav_home
+                , R.id.nav_slideshow
+                , R.id.nav_bookshelf
+        )
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        //Neu muon set nut home luon ve nha !!!!
+//        navigationView.setNavigationItemSelectedListener(item -> {
+//            if (item.getItemId() == R.id.nav_home && navController.getCurrentBackStack().getValue().get(1).getDestination().getId() == R.id.nav_home) {
+//                navController.popBackStack(R.id.nav_home, false);
+//            }
+//            drawer.closeDrawers();
+//            return onOptionsItemSelected(item);
+//        });
         //set up login activity result
-        ActivityResultLauncher<Intent> loginLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult o) {
-                int resCode = o.getResultCode();
-                Intent data = o.getData();
+        ActivityResultLauncher<Intent> loginLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
+            int resCode = o.getResultCode();
+            Intent data = o.getData();
 
-                if (resCode == RESULT_OK && data != null) {
-                    try {
-                        Bundle extras = data.getExtras();
-                        if (extras != null || extras.getString("id") != null) {
-                            User user = new User(Objects.requireNonNull(extras.getString("username")), extras.getString("email"), extras.getString("img"), extras.getString("id"));
-                            model.getUser().setValue(user);
-                        } else {
-                            Toast.makeText(MainActivity.this, getResources().getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
-                            model.getUser().setValue(new User());
-                        }
-                    } catch (NullPointerException e) {
-                        Toast.makeText(MainActivity.this, getResources().getString(R.string.error_norm), Toast.LENGTH_SHORT).show();
+            if (resCode == RESULT_OK && data != null) {
+                try {
+                    Bundle extras = data.getExtras();
+                    if (extras != null && extras.getString("id") != null) {
+                        User user = new User(Objects.requireNonNull(extras.getString("username")), extras.getString("email"), extras.getString("img"), extras.getString("id"));
+                        model.getUser().setValue(user);
+                    } else {
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
                         model.getUser().setValue(new User());
                     }
+                } catch (NullPointerException e) {
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.error_norm), Toast.LENGTH_SHORT).show();
+                    model.getUser().setValue(new User());
                 }
             }
         });
@@ -102,13 +105,13 @@ public class MainActivity extends AppCompatActivity {
         authMethodInit(navigationView, loginLauncher, navController);
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu);
         return true;
     }
 
@@ -144,14 +147,13 @@ public class MainActivity extends AppCompatActivity {
                 username.setText(newUser.getUsername());
                 email.setText(newUser.getEmail());
                 Log.i("changed", " HARRY!!!");
-                //change img
+                Picasso.get().load(newUser.getImgUrl()).fit().into(img);
             } else {
                 username.setText(R.string.nav_header_title);
                 email.setText(R.string.nav_header_subtitle);
                 img.setImageResource(R.mipmap.ic_launcher);
             }
         };
-        // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
         model.getUser().observe(this, nameObserver);
     }
 
@@ -164,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
 
 //                Toast.makeText(this, "Profile page underdevelopment", Toast.LENGTH_SHORT).show();
-                DrawerLayout mDrawerLayout = (DrawerLayout) binding.drawerLayout;
+                DrawerLayout mDrawerLayout = binding.drawerLayout;
                 mDrawerLayout.closeDrawers();
                 navController.navigate(R.id.profileFragment);
             }
@@ -174,26 +176,32 @@ public class MainActivity extends AppCompatActivity {
     public void mapUser(@NonNull FirebaseUser user) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference ref = db.collection("users").document(user.getUid());
-        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    final User res = new User();
-                    if (document.exists()) {
-                        res.setUsername(Objects.requireNonNull(document.getString("username")));
-                        res.setImgUrl(document.getString("imgUrl"));
-                        res.setEmail(document.getString("email"));
-                        res.setId(document.getId());
-                        model.getUser().setValue(res);
-                    } else {
-                        mAuth.signOut();
-                        Toast.makeText(MainActivity.this, R.string.error_user_not_found, Toast.LENGTH_LONG).show();
-                    }
+        ref.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                final User res = new User();
+                if (document.exists()) {
+                    res.setUsername(Objects.requireNonNull(document.getString("username")));
+                    res.setImgUrl(document.getString("imgUrl"));
+                    res.setEmail(document.getString("email"));
+                    res.setId(document.getId());
+                    model.getUser().setValue(res);
                 } else {
-                    Toast.makeText(MainActivity.this, R.string.error_norm, Toast.LENGTH_SHORT).show();
+                    mAuth.signOut();
+                    Toast.makeText(MainActivity.this, R.string.error_user_not_found, Toast.LENGTH_LONG).show();
                 }
+            } else {
+                Toast.makeText(MainActivity.this, R.string.error_norm, Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        return NavigationUI.onNavDestinationSelected(item, navController)
+                || super.onOptionsItemSelected(item);
+    }
+
+
 }

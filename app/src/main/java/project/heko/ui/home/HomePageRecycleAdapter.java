@@ -23,6 +23,7 @@ import project.heko.models.Book;
 
 public class HomePageRecycleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int VIEW_TYPE_ITEM = 0;
+    /** @noinspection FieldCanBeLocal*/
     private final int VIEW_TYPE_LOADING = 1;
     private final NavController controller;
     public List<HomePreviewDto> mItemList;
@@ -44,8 +45,7 @@ public class HomePageRecycleAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 Log.i("XX", "ID: " + book.getId());
                 Bundle payload = new Bundle();
                 payload.putString("id", book.getId());
-                //TODO uncomment below
-                //                controller.navigate(R.id.home_to_book, payload);
+                controller.navigate(R.id.home_to_book, payload);
             });
             return item;
         } else {

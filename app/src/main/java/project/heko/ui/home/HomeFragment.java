@@ -79,7 +79,6 @@ public class HomeFragment extends Fragment {
 
     @SuppressLint("NotifyDataSetChanged")
     private void populateData() {
-        //TODO fetch data
         fetch.count().get(AggregateSource.SERVER).addOnCompleteListener(task -> {
             long total = task.getResult().getCount();
             pag = new Pagination(total, PAGE_SIZE);
@@ -89,28 +88,30 @@ public class HomeFragment extends Fragment {
             if (task.isSuccessful()) {
                 cursor = task.getResult().getDocuments().get(task.getResult().size() - 1);
                 for (DocumentSnapshot x : task.getResult()) {
-                    HomePreviewDto item = x.toObject(HomePreviewDto.class);
-                    Log.i("XX", ""+item.getId());
-                    x.getReference().collection("volume").orderBy("create_at", Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(task1 -> {
-                        if (!task1.isSuccessful()) {
-                            rowsArrayList.add(item);
-                            recyclerViewAdapter.notifyDataSetChanged();
-                        } else {
-                            DocumentSnapshot i = task1.getResult().getDocuments().get(0);
-                            assert item != null;
-                            item.setLatest_vol(i.getString("title"));
-                            i.getReference().collection("chapters").orderBy("create_at", Query.Direction.ASCENDING).limit(1).get().addOnCompleteListener(task2 -> {
-                                if (task2.isSuccessful()) {
-                                    DocumentSnapshot z = task2.getResult().getDocuments().get(0);
-                                    if (z.exists()) {
-                                        item.setLatest_chap(z.getString("title"));
-                                    }
+                    if (x.exists()) {
+                        HomePreviewDto item = x.toObject(HomePreviewDto.class);
+                        if (item != null) {
+                            x.getReference().collection("volume").orderBy("create_at", Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(task1 -> {
+                                if (!task1.isSuccessful()) {
+                                    rowsArrayList.add(item);
+                                    recyclerViewAdapter.notifyDataSetChanged();
+                                } else {
+                                    DocumentSnapshot i = task1.getResult().getDocuments().get(0);
+                                    item.setLatest_vol(i.getString("title"));
+                                    i.getReference().collection("chapters").orderBy("create_at", Query.Direction.ASCENDING).limit(1).get().addOnCompleteListener(task2 -> {
+                                        if (task2.isSuccessful()) {
+                                            DocumentSnapshot z = task2.getResult().getDocuments().get(0);
+                                            if (z.exists()) {
+                                                item.setLatest_chap(z.getString("title"));
+                                            }
+                                        }
+                                        rowsArrayList.add(item);
+                                        recyclerViewAdapter.notifyDataSetChanged();
+                                    });
                                 }
-                                rowsArrayList.add(item);
-                                recyclerViewAdapter.notifyDataSetChanged();
                             });
                         }
-                    });
+                    }
                 }
             }
         });
