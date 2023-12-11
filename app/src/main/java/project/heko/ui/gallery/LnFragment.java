@@ -33,11 +33,9 @@ public class LnFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //TODO check for id
         if (getArguments() == null || getArguments().getString("id") == null) {
             UItools.toast(requireActivity(), getString(R.string.error_load_book));
             Navigation.findNavController(requireView()).popBackStack(R.id.nav_home, false);
-
             return;
         }
         String id = getArguments().getString("id");
