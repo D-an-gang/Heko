@@ -206,18 +206,18 @@ public class InfoLnFragment extends Fragment {
                 });
     }
 
+    /** @noinspection DataFlowIssue*/
     private void unFollow() {
         toggleLoading(true);
         db.collection("bookShelf")
                 .whereEqualTo("book_id", id)
-                .whereEqualTo("user_id", Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
+                .whereEqualTo("user_id", mAuth.getCurrentUser().getUid())
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Log.d("GetSus", document.getId() + " => " + document.getData());
-                            db.collection("bookShelf").document(document.getId())
-                                    .delete()
+                                    document.getReference().delete()
                                     .addOnSuccessListener(unused -> {
                                         Log.d("DeleteS", "DocumentSnapshot successfully deleted!");
                                         binding.follow.setImageResource(R.drawable.ic_heart_outline);
