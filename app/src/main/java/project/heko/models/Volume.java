@@ -1,21 +1,19 @@
 package project.heko.models;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.google.firebase.firestore.DocumentSnapshot;
-
-import java.util.Objects;
 public class Volume {
+    private String id;
     private String cover;
     private String title;
 
-    public Volume(String cover,@Nullable String title) {
+    public Volume(String id,String cover,@Nullable String title) {
+        this.id = id;
         this.cover = cover;
         this.title = title;
     }
 
     public Volume() {
+        this.id = "";
         this.cover = "";
         this.title = "";
     }
@@ -36,4 +34,11 @@ public class Volume {
         this.title = title;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

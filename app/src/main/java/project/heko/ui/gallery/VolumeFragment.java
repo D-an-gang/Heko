@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -16,8 +17,10 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.TreeMap;
 
+import project.heko.R;
 import project.heko.databinding.FragmentVolumeBinding;
 import project.heko.models.Chapter;
 import project.heko.models.Volume;
@@ -28,6 +31,7 @@ public class VolumeFragment extends Fragment {
     private TreeMap<Volume,ArrayList<Chapter>> mListItem;
     private FragmentVolumeBinding binding;
     private String id;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -59,7 +63,7 @@ public class VolumeFragment extends Fragment {
                                 Volume volume ;
                                 volume = v.toObject(Volume.class);
                                 assert volume != null;
-                                Log.i("Volume", volume.getTitle());
+                                Log.i("Volume", volume.getId());
                                 ArrayList<Chapter> chapters = new ArrayList<>();
                                 v.getReference().collection("chapters").orderBy("create_at",Query.Direction.ASCENDING).get().addOnCompleteListener(i -> {
                                     if (i.isSuccessful()){
@@ -79,6 +83,15 @@ public class VolumeFragment extends Fragment {
                             expandListViewAdapter = new ExpandListViewAdapter(mListGroup,mListItem);
                             binding.listVolume.setAdapter(expandListViewAdapter);
                             binding.listVolume.setGroupIndicator(null);
+                            binding.listVolume.setOnChildClickListener((parent, v, groupPosition, childPosition, idc) -> {
+                                Bundle payload = new Bundle();
+                                payload.putString("book", id);
+                                payload.putString("id", Objects.requireNonNull(mListItem.get(mListGroup.get(groupPosition))).get(childPosition).getId());
+                                payload.putString("vol", mListGroup.get(groupPosition).getId());
+                                Log.i("Data", id +" "+ Objects.requireNonNull(mListItem.get(mListGroup.get(groupPosition))).get(childPosition).getId() +" "+ mListGroup.get(groupPosition).getId());
+                                Navigation.findNavController(requireView()).navigate(R.id.action_nav_gallery_to_nav_slideshow,payload);
+                                return true;
+                            });
                         }
                     });
         }
@@ -89,4 +102,5 @@ public class VolumeFragment extends Fragment {
             return s1.getTitle().compareTo(s2.getTitle());
         }
     }
+
 }

@@ -47,9 +47,9 @@ public class SlideshowFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //TODO da link uncomment be duoi va xoa mockTest
-//        getData();
-        mockTesting();
-    }
+        getData();
+        /*mockTesting();*/
+    }/**/
 
     @Override
     public void onDestroyView() {

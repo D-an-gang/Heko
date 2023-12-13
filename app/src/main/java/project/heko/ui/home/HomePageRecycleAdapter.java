@@ -42,7 +42,6 @@ public class HomePageRecycleAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             RecyclerView.ViewHolder item = new ItemViewHolder(view);
             item.itemView.setOnClickListener(v -> {
                 Book book = mItemList.get(item.getBindingAdapterPosition());
-                Log.i("XX", "ID: " + book.getId());
                 Bundle payload = new Bundle();
                 payload.putString("id", book.getId());
                 controller.navigate(R.id.home_to_book, payload);
