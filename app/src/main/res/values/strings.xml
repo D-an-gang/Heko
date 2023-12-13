@@ -100,4 +100,13 @@
     <string name="text_change_user_info">Thay đổi thông tin tài khoản</string>
     <string name="book_follow">Truyện theo dõi</string>
     <string name="error_load_book">Không thể tải truyện</string>
+    <string name="fontset_title">Tùy chỉnh</string>
+    <string name="fontset_size">Kích cỡ chữ</string>
+    <string name="fontset_font">Phông chữ</string>
+
+    <!--    SharedPref keys-->
+    <string name="font_family_id">Font Family</string>
+    <string name="text_size">Text Size</string>
+    <!--    SharedPref keys-->
+
 </resources>

@@ -1,4 +1,4 @@
-package project.heko.ui.slideshow;
+package project.heko.ui.chapter;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;

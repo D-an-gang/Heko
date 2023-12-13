@@ -1,4 +1,4 @@
-package project.heko.ui.gallery;
+package project.heko.ui.book;
 
 import android.os.Bundle;
 import android.util.Log;

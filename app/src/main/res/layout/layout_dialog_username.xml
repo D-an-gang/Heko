@@ -4,8 +4,9 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_marginStart="33dp"
     android:background="@drawable/bg_corner"
-    android:layout_marginStart="33dp">
+    >
     <TextView
         android:text="@string/profile_title_update"
         android:textSize="25sp"
@@ -21,6 +22,7 @@
         android:inputType="text"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_margin="10dp"
         android:paddingBottom="10dp"
         android:hint="@string/username_hint"
@@ -33,22 +35,24 @@
         android:background="@color/white"
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
+
         <Button
             android:id="@+id/btn_dialog_cancel"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="120dp"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:textColor="@color/gray"
-            app:strokeColor="@color/trans"
-            android:text="@string/dialog_cancel"/>
+            android:text="@string/dialog_cancel"
+            android:textColor="#757575"
+            app:strokeColor="@color/trans" />
 
         <Button
             android:id="@+id/btn_dialog_ok"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            style="?attr/materialButtonOutlinedStyle"
-            android:text="@string/dialog_update"/>
+            android:text="@string/dialog_update"
+            android:textColor="#00838F" />
     </LinearLayout>
 </LinearLayout>

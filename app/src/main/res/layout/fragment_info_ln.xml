@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.gallery.InfoLnFragment">
+    tools:context=".ui.book.InfoLnFragment">
     <include
         android:id="@+id/loader"
         layout="@layout/loading_overlay"

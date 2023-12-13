@@ -32,7 +32,7 @@
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="project.heko.ui.gallery.LnFragment"
+        android:name="project.heko.ui.book.LnFragment"
         android:label="@string/menu_gallery"
         app:argType="string"
         tools:layout="@layout/light_novel_info">
@@ -58,7 +58,7 @@
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="project.heko.ui.slideshow.SlideshowFragment"
+        android:name="project.heko.ui.chapter.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
     <fragment

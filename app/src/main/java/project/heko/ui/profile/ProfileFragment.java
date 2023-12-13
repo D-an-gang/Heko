@@ -144,7 +144,7 @@ public class ProfileFragment extends Fragment {
     }
 
     @SuppressLint("ResourceAsColor")
-    private void updatePasswordListener(){
+    private void updatePasswordListener() {
         binding.textChangePassword.setOnClickListener(v -> {
                     toggleLoading(true);
                     FirebaseAuth.getInstance().sendPasswordResetEmail(old_email)
@@ -157,20 +157,21 @@ public class ProfileFragment extends Fragment {
                     binding.icPassword.setColorFilter(R.color.teal_700);
                     toggleLoading(false);
                 }
-                );
+        );
     }
-        @SuppressLint("InflateParams")
-        private void updateProfileListener() {
+
+    @SuppressLint("InflateParams")
+    private void updateProfileListener() {
         binding.textChangeInfo.setOnClickListener(v -> {
-                toggleLoading(true);
+                    toggleLoading(true);
                     final Dialog dialog = new Dialog(requireActivity());
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog.setContentView(R.layout.layout_dialog_username);
                     Window window = dialog.getWindow();
-                    if(window == null){
+                    if (window == null) {
                         return;
                     }
-                    window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT);
+                    window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
                     window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     WindowManager.LayoutParams wA = window.getAttributes();
                     wA.gravity = Gravity.CENTER;
@@ -182,7 +183,6 @@ public class ProfileFragment extends Fragment {
                         if (!old_username.equals(new_username.getText().toString()) && !new_username.getText().toString().equals("")) {
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
                             DocumentReference userRef = db.collection("users").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
-
                             userRef
                                     .update("username", new_username.getText().toString())
                                     .addOnSuccessListener(aVoid -> {
@@ -193,18 +193,17 @@ public class ProfileFragment extends Fragment {
                                         UItools.toast(requireActivity(), getString(R.string.profile_update_fail));
                                         dialog.dismiss();
                                     });
-                        }
-                        else{
+                        } else {
                             UItools.toast(requireActivity(), getString(R.string.profile_username_null));
                         }
                         Toast.makeText(getActivity(), new_username.getText().toString(), Toast.LENGTH_SHORT).show();
                     });
                     btnCancel.setOnClickListener(v1 ->
-                        dialog.dismiss()
+                            dialog.dismiss()
                     );
                     dialog.show();
-                toggleLoading(false);
-            }
+                    toggleLoading(false);
+                }
         );
     }
 }

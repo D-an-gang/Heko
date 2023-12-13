@@ -1,6 +1,8 @@
 package project.heko;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,7 +25,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -36,10 +37,11 @@ import java.util.Objects;
 import project.heko.auth.LoginActivity;
 import project.heko.databinding.ActivityMainBinding;
 import project.heko.models.User;
+import project.heko.ui.chapter.SettingViewModel;
+import project.heko.ui.dialogs.FontSettingDialog;
 import project.heko.ui.navHeader.navHeaderViewModel;
-import project.heko.ui.slideshow.SettingViewModel;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FontSettingDialog.FontDialogListener {
 
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private ActivityMainBinding binding;
     private SettingViewModel set_font;
+    FontSettingDialog dialog;
 
     public navHeaderViewModel getModel() {
         return model;
@@ -207,6 +210,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initFloatingButton() {
-        binding.appBarMain.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show());
+        binding.appBarMain.fab.setOnClickListener(view -> {
+            if (dialog != null
+                    && dialog.getDialog() != null
+                    && dialog.getDialog().isShowing()
+                    && !dialog.isRemoving()) {
+                //dialog is showing so do something
+                dialog.dismiss();
+            } else {
+                //dialog is not showing
+                showDialog();
+            }
+        });
+    }
+
+    @Override
+    public void onDialogPositiveClick(FontSettingDialog dialog) {
+        try {
+            Log.i("XX", "font:" + dialog.font_id + " | size: " + dialog.size);
+            SharedPreferences x = getPreferences(Context.MODE_PRIVATE);
+            Log.i("XX", "SP font:" + x.getInt(getString(R.string.font_family_id), -1) + " | size: " + x.getFloat(getString(R.string.text_size), -1));
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void showDialog() {
+        dialog = new FontSettingDialog();
+        dialog.show(getSupportFragmentManager(), "Font Setting");
     }
 }
