@@ -46,10 +46,9 @@ public class SlideshowFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //TODO da link uncomment be duoi va xoa mockTest
         getData();
-        /*mockTesting();*/
-    }/**/
+        initFont();
+    }
 
     @Override
     public void onDestroyView() {
@@ -103,20 +102,11 @@ public class SlideshowFragment extends Fragment {
         Navigation.findNavController(requireView()).popBackStack(R.id.nav_home, false);
     }
 
-    private void mockTesting() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("books").document("O5GqxRrBXPmNw15lyfQG").collection("volume").document("QQs7Uzt204ECiUvqYIOz").collection("chapters").document("13GKHwMpa6NUGhzYYmdT").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult().exists() && task.getResult().getString("content") != null && task.getResult().getTimestamp("create_at") != null && task.getResult().getString("title") != null) {
-                try {
-                    //noinspection DataFlowIssue
-                    ((MainActivity) getActivity()).getSupportActionBar().setTitle(task.getResult().getString("title"));
-                } catch (NullPointerException ex) {
-                    UItools.toast(requireActivity(), getResources().getString(R.string.error_norm));
-                }
-                slideshowViewModel.getText().setValue(task.getResult().getString("content"));
-            } else {
-                cancel();
-            }
+    private void initFont() {
+        SettingViewModel setFont = new ViewModelProvider(requireActivity()).get(SettingViewModel.class);
+        setFont.getFont().observe(getViewLifecycleOwner(), fontSetting -> {
+            binding.textSlideshow.setTypeface(fontSetting.font);
+            binding.textSlideshow.setTextSize(fontSetting.size);
         });
     }
 }

@@ -36,10 +36,7 @@ public class HeadingTagHandler extends SimpleTagHandler {
         if (border == null) {
             return null;
         }
-        // simple thing, assume that it's center for brevity only
-        // but of cause we can actually parse what property do we have here
         return new StyleSpan(Typeface.BOLD);
-//        return (AlignmentSpan) () -> Layout.Alignment.ALIGN_CENTER;
     }
 
     @NonNull

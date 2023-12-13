@@ -121,7 +121,7 @@ public class HomeFragment extends Fragment {
 
     private void initAdapter() {
         recyclerViewAdapter = new HomePageRecycleAdapter(rowsArrayList, Navigation.findNavController(requireView()));
-        GridLayoutManager grid = new GridLayoutManager(requireActivity(), 2);
+        GridLayoutManager grid = new GridLayoutManager(requireActivity(), 2,RecyclerView.VERTICAL,false);
 
         recyclerView.setLayoutManager(grid);
         recyclerView.setAdapter(recyclerViewAdapter);

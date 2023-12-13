@@ -82,7 +82,6 @@ public class InfoLnFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
     }
 
     private void getBook() {

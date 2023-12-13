@@ -37,6 +37,7 @@ import project.heko.auth.LoginActivity;
 import project.heko.databinding.ActivityMainBinding;
 import project.heko.models.User;
 import project.heko.ui.navHeader.navHeaderViewModel;
+import project.heko.ui.slideshow.SettingViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private navHeaderViewModel model;
     private FirebaseAuth mAuth;
     private ActivityMainBinding binding;
+    private SettingViewModel set_font;
 
     public navHeaderViewModel getModel() {
         return model;
@@ -57,14 +59,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
-        binding.appBarMain.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+        initFloatingButton();
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         liveDataInit(navigationView);
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home
-                , R.id.nav_slideshow
                 , R.id.nav_bookshelf
         )
                 .setOpenableLayout(drawer)
@@ -72,14 +72,14 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-        //Neu muon set nut home luon ve nha !!!!
-//        navigationView.setNavigationItemSelectedListener(item -> {
-//            if (item.getItemId() == R.id.nav_home && navController.getCurrentBackStack().getValue().get(1).getDestination().getId() == R.id.nav_home) {
-//                navController.popBackStack(R.id.nav_home, false);
-//            }
-//            drawer.closeDrawers();
-//            return onOptionsItemSelected(item);
-//        });
+        //Neu muon set nut home luon ve nha !!
+        navigationView.setNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_home && navController.getCurrentBackStack().getValue().get(1).getDestination().getId() == R.id.nav_home) {
+                navController.popBackStack(R.id.nav_home, false);
+            }
+            drawer.closeDrawers();
+            return onOptionsItemSelected(item);
+        });
         //set up login activity result
         ActivityResultLauncher<Intent> loginLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
             int resCode = o.getResultCode();
@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         authMethodInit(navigationView, loginLauncher, navController);
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        initSetFont();
     }
 
     @Override
@@ -164,8 +165,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, LoginActivity.class);
                 loginLauncher.launch(intent);
             } else {
-
-//                Toast.makeText(this, "Profile page underdevelopment", Toast.LENGTH_SHORT).show();
                 DrawerLayout mDrawerLayout = binding.drawerLayout;
                 mDrawerLayout.closeDrawers();
                 navController.navigate(R.id.profileFragment);
@@ -203,5 +202,11 @@ public class MainActivity extends AppCompatActivity {
                 || super.onOptionsItemSelected(item);
     }
 
+    private void initSetFont() {
+        set_font = new ViewModelProvider(this).get(SettingViewModel.class);
+    }
 
+    private void initFloatingButton() {
+        binding.appBarMain.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show());
+    }
 }
