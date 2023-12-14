@@ -19,4 +19,5 @@
     <color name="secondary_brown">#B0A695</color>
     <color name="third_brown">#776B5D</color>
     <color name="red">#f50000</color>
+    <color name="light_red">#BE3144</color>
 </resources>

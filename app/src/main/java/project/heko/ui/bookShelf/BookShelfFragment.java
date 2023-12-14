@@ -1,38 +1,82 @@
 package project.heko.ui.bookShelf;
 
-import androidx.lifecycle.ViewModelProvider;
-
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import project.heko.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+
+import java.util.Objects;
+
+import project.heko.databinding.FragmentBookShelfBinding;
+import project.heko.dto.BookShelfDto;
 
 public class BookShelfFragment extends Fragment {
 
-    private BookShelfViewModel mViewModel;
 
-    public static BookShelfFragment newInstance() {
-        return new BookShelfFragment();
-    }
+    private FragmentBookShelfBinding binding;
+    private BookShelfAdapter bookShelfAdapter;
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_book_shelf, container, false);
+        binding = FragmentBookShelfBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.i("user", Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+        getData();
+    }
+    @SuppressLint("NotifyDataSetChanged")
+    private void getData(){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Query query = db.collection("bookShelf")
+                .whereEqualTo("user_id", Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).orderBy("last_update", Query.Direction.DESCENDING);
+        FirestoreRecyclerOptions<BookShelfDto> options = new FirestoreRecyclerOptions.Builder<BookShelfDto>()
+                .setQuery(query, snapshot -> {
+                    BookShelfDto dto = new BookShelfDto();
+                    dto.setUnread(snapshot.getLong("unread"));
+                    db.collection("books").document(snapshot.getString("book_id"))
+                            .get().addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    dto.setCover(task.getResult().getString("book_cover"));
+                                    dto.setTitle(task.getResult().getString("title"));
+                                    bookShelfAdapter.notifyDataSetChanged();
+                                }
+                            });
+                    return dto;
+                }).build();
+        RecyclerView recyclerView = binding.recyclerView;
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        bookShelfAdapter = new BookShelfAdapter(options);
+        recyclerView.setAdapter(bookShelfAdapter);
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(BookShelfViewModel.class);
-        // TODO: Use the ViewModel
+    public void onStart() {
+        super.onStart();
+        bookShelfAdapter.startListening();
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        bookShelfAdapter.stopListening();
+    }
 }

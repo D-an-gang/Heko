@@ -121,10 +121,10 @@
                             android:id="@+id/txt_list_volume"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/title_volume"
-                            android:textSize="14sp"
                             android:layout_below="@id/ic_list"
-                            android:layout_centerInParent="true" />
+                            android:layout_centerInParent="true"
+                            android:text="@string/title_volume"
+                            android:textSize="14sp" />
                         <TextView
                             android:id="@+id/txt_last_update"
                             android:layout_width="wrap_content"
