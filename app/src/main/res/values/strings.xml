@@ -2,7 +2,7 @@
     <string name="app_name">Heko</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">User</string>
+    <string name="nav_header_title">Chạm để đăng nhập</string>
     <string name="nav_header_subtitle" />
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
@@ -108,5 +108,23 @@
     <string name="font_family_id">Font Family</string>
     <string name="text_size">Text Size</string>
     <!--    SharedPref keys-->
+    <!-- Preference Titles -->
+    <string name="messages_header">Giao diện</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="theme_sel_title">Màu chủ đạo</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Bật/Tắt thông báo</string>
+    <string name="attachment_summary_on">Thông báo hiện đang tắt
+    </string>
+    <string name="attachment_summary_off">Thông báo hiện đang tắt</string>
+    <string name="theme_id">theme</string>
+    <string name="menu_settings">Cài đặt ứng dụng</string>
+    <string name="setting_noti">Thông báo</string>
+    <string name="setting_notification">setting_notification</string>
 
 </resources>

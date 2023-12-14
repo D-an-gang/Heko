@@ -48,9 +48,10 @@
         android:id="@+id/fontset_fontsize"
         android:layout_height="wrap_content"
         android:contentDescription="@string/fontset_size"
-        android:valueFrom="8.0"
+        android:valueFrom="10.0"
         android:valueTo="30.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fontset_size"
+        android:stepSize="5.0"
         tools:ignore="DuplicateSpeakableTextCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>

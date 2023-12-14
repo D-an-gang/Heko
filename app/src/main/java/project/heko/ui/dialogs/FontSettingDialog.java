@@ -27,14 +27,6 @@ import project.heko.helpers.UItools;
 public class FontSettingDialog extends DialogFragment {
     public float size;
     public int font_id;
-
-    public interface FontDialogListener {
-        /**
-         * @noinspection unused
-         */
-        void onDialogPositiveClick(FontSettingDialog dialog);
-    }
-
     FontDialogListener listener;
     View view;
 
@@ -59,7 +51,16 @@ public class FontSettingDialog extends DialogFragment {
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(view).setMessage("Tùy Chỉnh")
                 // Add action buttons
-                .setPositiveButton("OK!", (dialog, id) -> listener.onDialogPositiveClick(FontSettingDialog.this)).setNegativeButton("Hủy", (dialog, id) -> {
+                .setPositiveButton("OK!", (dialog, id) ->
+                        {
+                            SharedPreferences sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putInt(getString(R.string.font_family_id), font_id);
+                            editor.putFloat(getString(R.string.text_size), size);
+                            editor.apply();
+                            listener.onDialogPositiveClick(FontSettingDialog.this);
+                        }
+                ).setNegativeButton("Hủy", (dialog, id) -> {
                     try {
                         Objects.requireNonNull(FontSettingDialog.this.getDialog()).cancel();
                     } catch (NullPointerException ex) {
@@ -77,14 +78,13 @@ public class FontSettingDialog extends DialogFragment {
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.requireContext(), R.array.fonts_array, android.R.layout.simple_spinner_item);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spin.setAdapter(adapter);
+            SharedPreferences sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE);
+            int save = sharedPref.getInt(getString(R.string.font_family_id), 0);
+            spin.setSelection(save);
             spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     font_id = position;
-                    SharedPreferences sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putInt(getString(R.string.font_family_id), font_id);
-                    editor.apply();
                 }
 
                 @Override
@@ -100,16 +100,12 @@ public class FontSettingDialog extends DialogFragment {
 
     private void initSlider() {
         Slider slide = (Slider) view.findViewById(R.id.fontset_fontsize);
-        slide.setValue(15);
+        SharedPreferences sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE);
+        float save = sharedPref.getFloat(getString(R.string.text_size), -1);
+        slide.setValue(save);
         slide.addOnChangeListener((slider, value, fromUser) -> {
             if (fromUser) {
                 size = value;
-                SharedPreferences sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putFloat(getString(R.string.text_size), value);
-                editor.apply();
-            } else {
-                slider.setValue(15);
             }
         });
     }
@@ -125,5 +121,12 @@ public class FontSettingDialog extends DialogFragment {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(MainActivity.class + " must implement NoticeDialogListener");
         }
+    }
+
+    public interface FontDialogListener {
+        /**
+         * @noinspection unused
+         */
+        void onDialogPositiveClick(FontSettingDialog dialog);
     }
 }
