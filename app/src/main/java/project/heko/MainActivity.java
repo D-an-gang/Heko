@@ -2,7 +2,8 @@ package project.heko;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -36,6 +37,10 @@ import java.util.Objects;
 
 import project.heko.auth.LoginActivity;
 import project.heko.databinding.ActivityMainBinding;
+import project.heko.helpers.FontConfig;
+import project.heko.helpers.NetworkHelper;
+import project.heko.helpers.ThemeConfig;
+import project.heko.models.FontSetting;
 import project.heko.models.User;
 import project.heko.ui.chapter.SettingViewModel;
 import project.heko.ui.dialogs.FontSettingDialog;
@@ -60,18 +65,12 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         setSupportActionBar(binding.appBarMain.toolbar);
         initFloatingButton();
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         liveDataInit(navigationView);
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home
-                , R.id.nav_bookshelf
-        )
-                .setOpenableLayout(drawer)
-                .build();
+        mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home, R.id.nav_bookshelf, R.id.nav_settings).setOpenableLayout(drawer).build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
@@ -109,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         initSetFont();
+        Log.i("XX", "sate:" + NetworkHelper.isNetworkConnected(this));
     }
 
     @Override
@@ -134,8 +134,7 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
     }
 
     private void liveDataInit(@NonNull NavigationView navView) {
@@ -201,8 +200,7 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.onNavDestinationSelected(item, navController)
-                || super.onOptionsItemSelected(item);
+        return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item);
     }
 
     private void initSetFont() {
@@ -211,10 +209,7 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
 
     private void initFloatingButton() {
         binding.appBarMain.fab.setOnClickListener(view -> {
-            if (dialog != null
-                    && dialog.getDialog() != null
-                    && dialog.getDialog().isShowing()
-                    && !dialog.isRemoving()) {
+            if (dialog != null && dialog.getDialog() != null && dialog.getDialog().isShowing() && !dialog.isRemoving()) {
                 //dialog is showing so do something
                 dialog.dismiss();
             } else {
@@ -228,8 +223,8 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
     public void onDialogPositiveClick(FontSettingDialog dialog) {
         try {
             Log.i("XX", "font:" + dialog.font_id + " | size: " + dialog.size);
-            SharedPreferences x = getPreferences(Context.MODE_PRIVATE);
-            Log.i("XX", "SP font:" + x.getInt(getString(R.string.font_family_id), -1) + " | size: " + x.getFloat(getString(R.string.text_size), -1));
+            Typeface x = FontConfig.getFonts(this.getApplicationContext()).get(dialog.font_id);
+            set_font.getFont().setValue(new FontSetting(x, dialog.size));
         } catch (Exception ignored) {
         }
     }
@@ -237,5 +232,17 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
     private void showDialog() {
         dialog = new FontSettingDialog();
         dialog.show(getSupportFragmentManager(), "Font Setting");
+    }
+
+    @Override
+    public Resources.Theme getTheme() {
+        Resources.Theme theme = super.getTheme();
+        try {
+            Integer theme_id = ThemeConfig.getAllThemes().get(getPreferences(Context.MODE_PRIVATE).getInt(getString(R.string.theme_id), -1));
+            theme.applyStyle(theme_id, true);
+        } catch (Exception ignored) {
+        }
+        // you could also use a switch if you have many themes that could apply
+        return theme;
     }
 }

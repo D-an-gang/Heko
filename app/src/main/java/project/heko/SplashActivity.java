@@ -8,6 +8,8 @@ import android.os.Looper;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import project.heko.helpers.NetworkHelper;
+
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
     @Override
@@ -18,7 +20,12 @@ public class SplashActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent;
+            if (NetworkHelper.isNetworkConnected(this)) {
+                intent = new Intent(this, MainActivity.class);
+            } else {
+                intent = new Intent(this, ErrorScreenActivity.class);
+            }
             startActivity(intent);
             finish();
         }, 3000);
