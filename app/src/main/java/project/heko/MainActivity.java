@@ -38,6 +38,7 @@ import java.util.Objects;
 import project.heko.auth.LoginActivity;
 import project.heko.databinding.ActivityMainBinding;
 import project.heko.helpers.FontConfig;
+import project.heko.helpers.NetworkHelper;
 import project.heko.helpers.ThemeConfig;
 import project.heko.models.FontSetting;
 import project.heko.models.User;
@@ -107,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         initSetFont();
+        Log.i("XX", "sate:" + NetworkHelper.isNetworkConnected(this));
     }
 
     @Override

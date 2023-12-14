@@ -126,5 +126,8 @@
     <string name="menu_settings">Cài đặt ứng dụng</string>
     <string name="setting_noti">Thông báo</string>
     <string name="setting_notification">setting_notification</string>
+    <string name="err_screen_text">Khong co mang rui 😭😭😭</string>
+    <string name="err_screen_header">Oh, nooo!!!</string>
+    <string name="err_screen_retry">thử lại</string>
 
 </resources>
