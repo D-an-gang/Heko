@@ -145,7 +145,6 @@ public class InfoLnFragment extends Fragment {
 
     private void isFollowed() {
 
-        //AggregateQuery count = db.collection("bookShelf").whereEqualTo("book_id", Objects.requireNonNull(lnViewModel.getBook().getValue()).getId()).whereEqualTo("user_id", Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).count();
         if (checkLogin()) {
             toggleLoading(true);
             Query query = db.collection("bookShelf")
@@ -169,17 +168,17 @@ public class InfoLnFragment extends Fragment {
     }
 
     private void showFollow() {
-
         binding.follow.setOnClickListener(v -> {
             //nma m da check roi con gi
             if (checkLogin()) {
                 if (Boolean.TRUE.equals(lnViewModel.getId().getValue())) {
                     lnViewModel.getId().setValue(false);
+                    unFollow();
                     Log.i("Clicked", "Unfollow");
                 } else {
                     lnViewModel.getId().setValue(true);
                     Log.i("Clicked", "Follow");
-
+                    Follow();
                 }
             } else {
                 binding.follow.setImageResource(R.drawable.ic_heart_outline);
@@ -192,18 +191,31 @@ public class InfoLnFragment extends Fragment {
 
     private void Follow() {
         toggleLoading(true);
-        BookShelf bookShelf = new BookShelf(id, new Timestamp(new Date()), 0, Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
-        db.collection("bookShelf")
-                .add(bookShelf)
-                .addOnSuccessListener(documentReference -> {
-                    Log.d("Add", "DocumentSnapshot written with ID: " + documentReference.getId());
-                    binding.follow.setImageResource(R.drawable.ic_heart);
-                    toggleLoading(false);
-                })
-                .addOnFailureListener(e -> {
-                    lnViewModel.getId().setValue(false);
-                    toggleLoading(false);
-                });
+        Query query = db.collection("bookShelf")
+                .whereEqualTo("book_id", id)
+                .whereEqualTo("user_id", Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+        AggregateQuery countQuery = query.count();
+        countQuery.get(AggregateSource.SERVER).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                AggregateQuerySnapshot snapshot = task.getResult();
+                count = (int) snapshot.getCount();
+                if(count > 0){
+                    unFollow();
+                }
+                BookShelf bookShelf = new BookShelf(id, new Timestamp(new Date()), 0, Objects.requireNonNull(mAuth.getCurrentUser()).getUid(),new Timestamp(new Date()));
+                db.collection("bookShelf")
+                        .add(bookShelf)
+                        .addOnSuccessListener(documentReference -> {
+                            Log.d("Add", "DocumentSnapshot written with ID: " + documentReference.getId());
+                            binding.follow.setImageResource(R.drawable.ic_heart);
+                            toggleLoading(false);
+                        })
+                        .addOnFailureListener(e -> {
+                            lnViewModel.getId().setValue(false);
+                            toggleLoading(false);
+                        });
+            }
+        });
     }
 
     /** @noinspection DataFlowIssue*/
@@ -249,6 +261,7 @@ public class InfoLnFragment extends Fragment {
 
     private void initFollowService() {
         //khoi tao lai follow trong nay khire resume !!!
+        lnViewModel.getId().removeObservers(getViewLifecycleOwner());
         isFollowed();
         if (checkLogin()) {
             if (Boolean.TRUE.equals(lnViewModel.getId().getValue())) {
@@ -256,9 +269,11 @@ public class InfoLnFragment extends Fragment {
             } else binding.follow.setImageResource(R.drawable.ic_heart_outline);
             lnViewModel.getId().observe(getViewLifecycleOwner(), aBoolean -> {
                 if (aBoolean) {
-                    Follow();
+                    /*Follow();*/
+                    binding.follow.setImageResource(R.drawable.ic_heart);
                 } else {
-                    unFollow();
+                    /*unFollow();*/
+                    binding.follow.setImageResource(R.drawable.ic_heart_outline);
                 }
             });
         }
