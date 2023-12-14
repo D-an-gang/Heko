@@ -9,12 +9,14 @@ public class BookShelf {
     private Timestamp last_read;
     private int unread;
     private String user_id;
+    private Timestamp last_update;
 
-    public BookShelf(String book_id, Timestamp last_read, int unread, String user_id) {
+    public BookShelf(String book_id, Timestamp last_read, int unread, String user_id, Timestamp last_update) {
         this.book_id = book_id;
         this.last_read = last_read;
         this.unread = unread;
         this.user_id = user_id;
+        this.last_update = last_update;
     }
 
     public BookShelf() {
@@ -22,6 +24,7 @@ public class BookShelf {
         this.last_read = new Timestamp(new Date());
         this.unread = 0;
         this.user_id = "";
+        this.last_update = new Timestamp(new Date());
     }
 
     public String getBook_id() {
@@ -54,5 +57,13 @@ public class BookShelf {
 
     public void setUser_id(String user_id) {
         this.user_id = user_id;
+    }
+
+    public Timestamp getLast_update() {
+        return last_update;
+    }
+
+    public void setLast_update(Timestamp last_update) {
+        this.last_update = last_update;
     }
 }
