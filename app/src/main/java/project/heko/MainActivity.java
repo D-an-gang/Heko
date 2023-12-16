@@ -1,7 +1,9 @@
 package project.heko;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +11,7 @@ import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,13 +23,14 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDeepLinkBuilder;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -37,14 +41,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 import project.heko.auth.LoginActivity;
@@ -73,9 +72,11 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
         return model;
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        createNotificationChannel();
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarMain.toolbar);
@@ -127,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
             return onOptionsItemSelected(item);
         });
         initLastRead();
+        ListenEventUpdate();
     }
 
     @Override
@@ -274,9 +276,7 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
         boolean state = pref.getString(getString(R.string.lr_d_vol_title), "").equals("") && pref.getString(getString(R.string.lr_d_chapter_title), "").equals("") && pref.getString(getString(R.string.lr_d_book_title), "").equals("") && pref.getString(getString(R.string.lr_chapter_id), "").equals("") && pref.getString(getString(R.string.lr_volume_id), "").equals("") && pref.getString(getString(R.string.lr_d_book_cover), "").equals("") && pref.getString(getString(R.string.lr_book_id), "").equals("");
         if (mAuth.getCurrentUser() != null && !state) {
             binding.lastreadTitle.setText(pref.getString(getString(R.string.lr_d_book_title), ""));
-            String text = pref.getString(getString(R.string.lr_d_vol_title), "")
-                    + " - " +
-                    pref.getString(getString(R.string.lr_d_chapter_title), "");
+            String text = pref.getString(getString(R.string.lr_d_vol_title), "") + " - " + pref.getString(getString(R.string.lr_d_chapter_title), "");
             binding.lastreadChapter.setText(text);
             Picasso.get().load(pref.getString(getString(R.string.lr_d_book_cover), "")).error(R.drawable.nocover).fit().centerCrop().into(binding.lastreadCover);
             binding.lrBtn.setOnClickListener(v -> {
@@ -305,34 +305,53 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
         super.onResume();
         initLastRead();
     }
-    private void ListenEventUpdate(){
-        if(mAuth.getCurrentUser() != null){
+
+    /****/
+    @SuppressLint("MissingPermission")
+    private void ListenEventUpdate() {
+        if (mAuth.getCurrentUser() != null) {
             mAuth.getCurrentUser().getUid();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("bookShelf")
-                    .whereEqualTo("user_id", mAuth.getCurrentUser().getUid())
-                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable QuerySnapshot value,
-                                            @Nullable FirebaseFirestoreException e) {
-                            if (e != null) {
-                                UItools.toast(getApplicationContext(), getResources().getString(R.string.error_norm));
-                                return;
+            db.collection("bookShelf").whereEqualTo("user_id", mAuth.getCurrentUser().getUid()).addSnapshotListener((value, e) -> {
+                //noinspection deprecation
+                boolean setting = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("notification", false);
+                Log.i("XX", "" + setting);
+                if (e != null) {
+                    UItools.toast(getApplicationContext(), getResources().getString(R.string.error_norm));
+                    return;
+                }
+                if (!setting) return;
+                createNotificationChannel();
+                PendingIntent pendingIntent = new NavDeepLinkBuilder(getApplicationContext()).setGraph(R.navigation.mobile_navigation).setDestination(R.id.nav_bookshelf).createPendingIntent();
+                //noinspection DataFlowIssue
+                for (DocumentChange dc : value.getDocumentChanges()) {
+                    if (dc.getType() == DocumentChange.Type.MODIFIED) {
+                        Long unread = dc.getDocument().getLong("unread");
+                        db.collection("books").document(Objects.requireNonNull(dc.getDocument().getString("book_id"))).get().addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                String title = documentSnapshot.getString("title");
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "VVS").setSmallIcon(R.drawable.ic_bookmark).setContentTitle("Thông báo Heko").setContentText("Cập nhât: " + title).setStyle(new NotificationCompat.BigTextStyle().bigText(title + " đã có thêm " + unread + " chương mới")).setContentIntent(pendingIntent).setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+                                // notificationId is a unique int for each notification that you must define.
+                                notificationManager.notify(0, builder.build());
                             }
-                            assert value != null;
-                            for (DocumentChange dc : value.getDocumentChanges()) {
-                                if(dc.getType() == DocumentChange.Type.MODIFIED){
-                                    Long unread = dc.getDocument().getLong("unread");
-                                    db.collection("books").document(Objects.requireNonNull(dc.getDocument().getString("book_id")))
-                                            .get().addOnSuccessListener(documentSnapshot -> {
-                                               /*if(documentSnapshot.exists()){
+                        });
+                    }
+                }
+            });
+        }
+    }
 
-                                               }*/
-                                            });
-                                }
-                            }
-                        }
-                    });
+    @SuppressLint("ObsoleteSdkInt")
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Thông báo Heko";
+            String description = "Thông báo cập nhật truyện";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("VVS", name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
         }
     }
 }
