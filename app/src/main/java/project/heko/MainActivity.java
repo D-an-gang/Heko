@@ -1,10 +1,13 @@
 package project.heko;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,7 +20,9 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -29,17 +34,24 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import project.heko.auth.LoginActivity;
 import project.heko.databinding.ActivityMainBinding;
 import project.heko.helpers.FontConfig;
 import project.heko.helpers.ThemeConfig;
+import project.heko.helpers.UItools;
 import project.heko.models.FontSetting;
 import project.heko.models.User;
 import project.heko.ui.chapter.SettingViewModel;
@@ -292,5 +304,35 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
     protected void onResume() {
         super.onResume();
         initLastRead();
+    }
+    private void ListenEventUpdate(){
+        if(mAuth.getCurrentUser() != null){
+            mAuth.getCurrentUser().getUid();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("bookShelf")
+                    .whereEqualTo("user_id", mAuth.getCurrentUser().getUid())
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value,
+                                            @Nullable FirebaseFirestoreException e) {
+                            if (e != null) {
+                                UItools.toast(getApplicationContext(), getResources().getString(R.string.error_norm));
+                                return;
+                            }
+                            assert value != null;
+                            for (DocumentChange dc : value.getDocumentChanges()) {
+                                if(dc.getType() == DocumentChange.Type.MODIFIED){
+                                    Long unread = dc.getDocument().getLong("unread");
+                                    db.collection("books").document(Objects.requireNonNull(dc.getDocument().getString("book_id")))
+                                            .get().addOnSuccessListener(documentSnapshot -> {
+                                               /*if(documentSnapshot.exists()){
+
+                                               }*/
+                                            });
+                                }
+                            }
+                        }
+                    });
+        }
     }
 }

@@ -144,6 +144,7 @@
     <string name="lr_postion">lr_postion</string>
     <string name="ch_ng_c_g_n_nh_t">Chương đọc gần nhất</string>
     <string name="c_ti_p">Đọc tiếp</string>
+    <string name="channel_name">Thông báo truyện mới</string>
     <!--    save last read-->
 
 </resources>
