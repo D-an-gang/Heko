@@ -131,5 +131,7 @@
     <string name="err_screen_text">Khong co mang rui 😭😭😭</string>
     <string name="err_screen_header">Oh, nooo!!!</string>
     <string name="err_screen_retry">thử lại</string>
+    <string name="book_shelf">Tủ sách</string>
+    <string name="followed_book">Truyện đang theo dõi</string>
 
 </resources>
