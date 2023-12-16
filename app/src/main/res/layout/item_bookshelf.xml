@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:strokeWidth="1dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+        <ImageView
+            android:id="@+id/img_book"
+            android:layout_width="60dp"
+            android:layout_height="70dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/nocover"
+            android:contentDescription="@string/image_of_book" />
+        <TextView
+            android:id="@+id/title_book"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/img_book"
+            android:layout_toStartOf="@id/unread"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
+            android:text="Tôi đã hôn em gái của người yêu của mình"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:layout_centerVertical="true"
+            android:textSize="14sp"
+            />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/unread"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12"
+            android:textColor="@color/white"
+            android:layout_toStartOf="@id/read"
+            android:layout_centerVertical="true"
+            android:backgroundTint="@color/light_red"
+            android:textStyle="bold"
+            android:textSize="15sp"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/read"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="@string/read"
+            android:includeFontPadding="false"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            app:cornerRadius="15dp"
+            android:textSize="11sp"/>
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>
