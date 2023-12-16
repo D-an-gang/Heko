@@ -2,6 +2,7 @@ package project.heko;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -38,7 +39,6 @@ import java.util.Objects;
 import project.heko.auth.LoginActivity;
 import project.heko.databinding.ActivityMainBinding;
 import project.heko.helpers.FontConfig;
-import project.heko.helpers.NetworkHelper;
 import project.heko.helpers.ThemeConfig;
 import project.heko.models.FontSetting;
 import project.heko.models.User;
@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
     private ActivityMainBinding binding;
     private SettingViewModel set_font;
     FontSettingDialog dialog;
+    private DrawerLayout drawer;
 
     public navHeaderViewModel getModel() {
         return model;
@@ -67,21 +68,13 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarMain.toolbar);
         initFloatingButton();
-        DrawerLayout drawer = binding.drawerLayout;
+        drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         liveDataInit(navigationView);
         mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home, R.id.nav_bookshelf, R.id.nav_settings).setOpenableLayout(drawer).build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-        //Neu muon set nut home luon ve nha !!
-        navigationView.setNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_home && navController.getCurrentBackStack().getValue().get(1).getDestination().getId() == R.id.nav_home) {
-                navController.popBackStack(R.id.nav_home, false);
-            }
-            drawer.closeDrawers();
-            return onOptionsItemSelected(item);
-        });
         //set up login activity result
         ActivityResultLauncher<Intent> loginLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
             int resCode = o.getResultCode();
@@ -108,7 +101,20 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         initSetFont();
-        Log.i("XX", "sate:" + NetworkHelper.isNetworkConnected(this));
+        //Neu muon set nut home luon ve nha !!
+        navigationView.setNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_home && navController.getCurrentBackStack().getValue().get(1).getDestination().getId() == R.id.nav_home) {
+                navController.popBackStack(R.id.nav_home, false);
+            }
+            if (item.getItemId() == R.id.nav_bookshelf && mAuth.getCurrentUser() == null) {
+                Intent intent = new Intent(this, LoginActivity.class);
+                loginLauncher.launch(intent);
+                return false;
+            }
+            drawer.closeDrawers();
+            return onOptionsItemSelected(item);
+        });
+        initLastRead();
     }
 
     @Override
@@ -205,6 +211,11 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
 
     private void initSetFont() {
         set_font = new ViewModelProvider(this).get(SettingViewModel.class);
+        set_font.getReset().observe(this, aBoolean -> {
+            if (aBoolean) {
+                initLastRead();
+            }
+        });
     }
 
     private void initFloatingButton() {
@@ -244,5 +255,42 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
         }
         // you could also use a switch if you have many themes that could apply
         return theme;
+    }
+
+    private void initLastRead() {
+        SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
+        boolean state = pref.getString(getString(R.string.lr_d_vol_title), "").equals("") && pref.getString(getString(R.string.lr_d_chapter_title), "").equals("") && pref.getString(getString(R.string.lr_d_book_title), "").equals("") && pref.getString(getString(R.string.lr_chapter_id), "").equals("") && pref.getString(getString(R.string.lr_volume_id), "").equals("") && pref.getString(getString(R.string.lr_d_book_cover), "").equals("") && pref.getString(getString(R.string.lr_book_id), "").equals("");
+        if (mAuth.getCurrentUser() != null && !state) {
+            binding.lastreadTitle.setText(pref.getString(getString(R.string.lr_d_book_title), ""));
+            String text = pref.getString(getString(R.string.lr_d_vol_title), "")
+                    + " - " +
+                    pref.getString(getString(R.string.lr_d_chapter_title), "");
+            binding.lastreadChapter.setText(text);
+            Picasso.get().load(pref.getString(getString(R.string.lr_d_book_cover), "")).error(R.drawable.nocover).fit().centerCrop().into(binding.lastreadCover);
+            binding.lrBtn.setOnClickListener(v -> {
+                NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+                Bundle bun = new Bundle();
+                bun.putString("book", pref.getString(getString(R.string.lr_book_id), ""));
+                bun.putString("id", pref.getString(getString(R.string.lr_chapter_id), ""));
+                bun.putString("vol", pref.getString(getString(R.string.lr_volume_id), ""));
+                navController.navigate(R.id.nav_slideshow, bun);
+                drawer.closeDrawers();
+            });
+        } else {
+            binding.lastreadGroup.setVisibility(View.GONE);
+        }
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        initLastRead();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initLastRead();
     }
 }

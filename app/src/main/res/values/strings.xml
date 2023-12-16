@@ -133,5 +133,17 @@
     <string name="err_screen_retry">thử lại</string>
     <string name="book_shelf">Tủ sách</string>
     <string name="followed_book">Truyện đang theo dõi</string>
+    <!--    save last read-->
+    <string name="lr_book_id">lrbookid</string>
+    <string name="lr_chapter_id">lr_chapter_id</string>
+    <string name="lr_volume_id">lr_volume_id</string>
+    <string name="lr_d_book_title">lr_d_book_title</string>
+    <string name="lr_d_book_cover">lr_d_book_cover</string>
+    <string name="lr_d_chapter_title">lr_d_chapter_title</string>
+    <string name="lr_d_vol_title">lr_d_vol_title</string>
+    <string name="lr_postion">lr_postion</string>
+    <string name="ch_ng_c_g_n_nh_t">Chương đọc gần nhất</string>
+    <string name="c_ti_p">Đọc tiếp</string>
+    <!--    save last read-->
 
 </resources>
