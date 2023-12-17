@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
     private void initLastRead() {
         SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
         boolean state = pref.getString(getString(R.string.lr_d_vol_title), "").equals("") && pref.getString(getString(R.string.lr_d_chapter_title), "").equals("") && pref.getString(getString(R.string.lr_d_book_title), "").equals("") && pref.getString(getString(R.string.lr_chapter_id), "").equals("") && pref.getString(getString(R.string.lr_volume_id), "").equals("") && pref.getString(getString(R.string.lr_d_book_cover), "").equals("") && pref.getString(getString(R.string.lr_book_id), "").equals("");
-        if (mAuth.getCurrentUser() != null && !state) {
+        if (!state) {
             binding.lastreadTitle.setText(pref.getString(getString(R.string.lr_d_book_title), ""));
             String text = pref.getString(getString(R.string.lr_d_vol_title), "") + " - " + pref.getString(getString(R.string.lr_d_chapter_title), "");
             binding.lastreadChapter.setText(text);
@@ -315,7 +315,6 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
             db.collection("bookShelf").whereEqualTo("user_id", mAuth.getCurrentUser().getUid()).addSnapshotListener((value, e) -> {
                 //noinspection deprecation
                 boolean setting = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("notification", false);
-                Log.i("XX", "" + setting);
                 if (e != null) {
                     UItools.toast(getApplicationContext(), getResources().getString(R.string.error_norm));
                     return;
@@ -325,7 +324,8 @@ public class MainActivity extends AppCompatActivity implements FontSettingDialog
                 PendingIntent pendingIntent = new NavDeepLinkBuilder(getApplicationContext()).setGraph(R.navigation.mobile_navigation).setDestination(R.id.nav_bookshelf).createPendingIntent();
                 //noinspection DataFlowIssue
                 for (DocumentChange dc : value.getDocumentChanges()) {
-                    if (dc.getType() == DocumentChange.Type.MODIFIED) {
+                    //noinspection DataFlowIssue
+                    if (dc.getType() == DocumentChange.Type.MODIFIED && dc.getDocument().getLong("unread") > 0) {
                         Long unread = dc.getDocument().getLong("unread");
                         db.collection("books").document(Objects.requireNonNull(dc.getDocument().getString("book_id"))).get().addOnSuccessListener(documentSnapshot -> {
                             if (documentSnapshot.exists()) {

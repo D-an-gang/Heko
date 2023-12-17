@@ -10,14 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,7 +22,6 @@ import com.squareup.picasso.Picasso;
 
 import project.heko.R;
 import project.heko.dto.BookShelfDto;
-import project.heko.models.Book;
 
 public class BookShelfAdapter extends FirestoreRecyclerAdapter<BookShelfDto, BookShelfAdapter.BookShelfHolder> {
     private final NavController controller;
@@ -65,16 +61,12 @@ public class BookShelfAdapter extends FirestoreRecyclerAdapter<BookShelfDto, Boo
         holder.btn.setOnClickListener(t -> {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("bookShelf").document(model.getDocId()).update("unread",0)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @SuppressLint("ResourceAsColor")
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                holder.unread.setVisibility(View.GONE);
-                                holder.btn.setEnabled(false);
-                                holder.btn.setText("Đã đọc");
-                                holder.btn.setBackgroundColor(R.color.secondary);
-                            }
+                    .addOnCompleteListener(task -> {
+                        if(task.isSuccessful()){
+                            holder.unread.setVisibility(View.GONE);
+                            holder.btn.setEnabled(false);
+                            holder.btn.setText("Đã đọc");
+                            holder.btn.setBackgroundColor(R.color.secondary);
                         }
                     });
         });
@@ -85,13 +77,12 @@ public class BookShelfAdapter extends FirestoreRecyclerAdapter<BookShelfDto, Boo
     public BookShelfHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_bookshelf, parent,false);
-        RecyclerView.ViewHolder item = new BookShelfHolder(view);
         return new BookShelfHolder(view);
     }
 
 
+    /** @noinspection FieldMayBeFinal*/
     public class BookShelfHolder extends RecyclerView.ViewHolder{
-        //TODO check unread co bang 0 chua? neu = thi set an chip voi button
         private ImageView cover;
         private TextView txtTitle;
         private Chip unread;

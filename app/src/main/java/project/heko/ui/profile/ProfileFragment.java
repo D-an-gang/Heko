@@ -3,6 +3,7 @@ package project.heko.ui.profile;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -27,12 +28,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
 import project.heko.MainActivity;
 import project.heko.R;
 import project.heko.databinding.FragmentProfileBinding;
+import project.heko.helpers.ThemeConfig;
 import project.heko.helpers.UItools;
 import project.heko.models.User;
 
@@ -46,11 +49,18 @@ public class ProfileFragment extends Fragment {
     private String old_email;
 
 
+    /** @noinspection DataFlowIssue*/
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         mViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
+        try {
+            int theme_num = requireActivity().getPreferences(Context.MODE_PRIVATE).getInt(getString(R.string.theme_id), -1);
+            Integer theme_id = ThemeConfig.getAllThemes().get(theme_num);
+            getContext().getTheme().applyStyle(theme_id, true);
+        } catch (Exception ignored) {
+        }
         return binding.getRoot();
 
     }
@@ -70,6 +80,7 @@ public class ProfileFragment extends Fragment {
         mViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
             binding.txtProfileUsername.setText(user.getUsername());
             binding.txtProfileEmail.setText(user.getEmail());
+            Picasso.get().load(user.getImgUrl()).fit().centerCrop().error(R.mipmap.ic_launcher_round).into(binding.profileImageDetail);
         });
         //hide user panel first
         //get user data

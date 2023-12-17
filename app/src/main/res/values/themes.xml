@@ -36,6 +36,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/cherry_700</item>
         <!-- Customize your theme here. -->
+        <item name="backgroundColor">?attr/colorPrimary</item>
+        <item name="colorPrimaryDark">?attr/colorPrimary</item>
     </style>
 
     <style name="Theme.Cherry.NoActionBar">

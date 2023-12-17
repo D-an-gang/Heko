@@ -9,7 +9,7 @@
 
     <string name="menu_home">Đọc truyện</string>
     <string name="menu_gallery">Thông tin truyện</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_slideshow">Đọc truyện</string>
     <string name="menu_logout">Đăng xuất</string>
 
     <string name="backbtn">Go back</string>
@@ -145,6 +145,7 @@
     <string name="ch_ng_c_g_n_nh_t">Chương đọc gần nhất</string>
     <string name="c_ti_p">Đọc tiếp</string>
     <string name="channel_name">Thông báo truyện mới</string>
+    <string name="cd_floatingbutton">change text settings</string>
     <!--    save last read-->
 
 </resources>

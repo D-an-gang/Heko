@@ -99,9 +99,9 @@ public class FontSettingDialog extends DialogFragment {
     }
 
     private void initSlider() {
-        Slider slide = (Slider) view.findViewById(R.id.fontset_fontsize);
+        Slider slide = view.findViewById(R.id.fontset_fontsize);
         SharedPreferences sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE);
-        float save = sharedPref.getFloat(getString(R.string.text_size), -1);
+        float save = sharedPref.getFloat(getString(R.string.text_size), 15);
         slide.setValue(save);
         slide.addOnChangeListener((slider, value, fromUser) -> {
             if (fromUser) {
