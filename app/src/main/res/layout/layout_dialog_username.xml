@@ -52,7 +52,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="@string/dialog_update"
-            android:textColor="#00838F" />
+            android:text="@string/dialog_update" />
     </LinearLayout>
 </LinearLayout>

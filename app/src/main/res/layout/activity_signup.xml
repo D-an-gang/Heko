@@ -116,7 +116,7 @@
             android:layout_marginHorizontal="10dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/curve_box_teal_bg"
-            android:text="@string/title_activity_login"
+            android:text="@string/signup_title"
             android:textColor="@color/white"
             app:layout_constraintTop_toBottomOf="@id/txt_pw_con"
             tools:layout_editor_absoluteX="16dp" />
@@ -127,7 +127,7 @@
             android:layout_height="30dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:gravity="right"
+            android:gravity="end"
             android:paddingEnd="7dp"
             android:text="@string/signup_login_link"
             android:textSize="15sp"
