@@ -9,7 +9,7 @@ const user_list: User[] = []
 const Users = () => {
   const db = getFirestore(app);
   const [isLoading, setLoading] = useState(false)
-  useEffect(() => {fetch()},[]);
+  useEffect(() => { fetch() }, []);
   const fetch = async () => {
     setLoading(true)
     const querySnapshot = await getDocs(collection(db, "users").withConverter(userConverter));
@@ -21,7 +21,7 @@ const Users = () => {
     setLoading(false)
   }
   if (isLoading) {
-    return <Loading/>
+    return <Loading />
   }
   return <div>
     <h1>User list</h1>

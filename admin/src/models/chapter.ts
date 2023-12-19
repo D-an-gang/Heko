@@ -20,7 +20,7 @@ class Chapter {
     }
 }
 
-export const bookConverter = {
+export const chapterConverter = {
     toFirestore: (book: Chapter) => {
         return {
             id: book.id,

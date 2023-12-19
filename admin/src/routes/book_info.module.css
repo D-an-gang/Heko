@@ -1,0 +1,14 @@
+.info {
+  width: 80%;
+  display: flex;
+  font-size: large;
+  gap: 1rem;
+  .infoes {
+    p {
+      margin-bottom: .5rem;
+    }
+  }
+  .cover {
+    width: 10rem;
+  }
+}

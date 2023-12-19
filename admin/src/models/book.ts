@@ -13,8 +13,6 @@ export class Book {
     constructor(author: string, book_cover: string, chapters_number: number, created_at: Timestamp,
         description: string, genre: string, id: string, last_update: Timestamp, title: string
     ) {
-
-
         this.id = id
         this.author = author
         this.book_cover = book_cover
