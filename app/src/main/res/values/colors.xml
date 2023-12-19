@@ -12,4 +12,11 @@
     <color name="secondary_alt">#246987</color>
     <color name="trans">#00000000</color>
     <color name="gray">#A9A9A9</color>
+    <color name="slight_gray">#eceeef</color>
+    <color name="background_color">#fff</color>
+    <color name="gray_2">#b6b8b6</color>
+    <color name="primary_brown">#EBE3D5</color>
+    <color name="secondary_brown">#B0A695</color>
+    <color name="third_brown">#776B5D</color>
+    <color name="red">#f50000</color>
 </resources>

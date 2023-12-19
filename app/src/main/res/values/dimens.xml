@@ -13,5 +13,8 @@
     <dimen name="login_title_h">80dp</dimen>
     <dimen name="login_title_fontSize">25sp</dimen>
     <dimen name="logoutBtn_h">49dp</dimen>
+    <dimen name="home_10dp">10dp</dimen>
+    <dimen name="home_8dp">8dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 
 </resources>

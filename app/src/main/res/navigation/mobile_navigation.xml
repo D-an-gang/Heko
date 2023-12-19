@@ -9,13 +9,20 @@
         android:id="@+id/nav_home"
         android:name="project.heko.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_nav_home_to_searchFragment"
+            app:destination="@id/searchFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+             />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="project.heko.ui.gallery.GalleryFragment"
+        android:name="project.heko.ui.gallery.LnFragment"
         android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/light_novel_info" />
 
     <fragment
         android:id="@+id/nav_slideshow"
@@ -25,6 +32,11 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="project.heko.ui.profile.ProfileFragment"
-        android:label="fragment_profile"
+        android:label="Profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="project.heko.ui.search.SearchFragment"
+        android:label="Search"
+        tools:layout="@layout/fragment_search" />
 </navigation>
