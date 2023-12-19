@@ -7,8 +7,7 @@ import {
 import ErrorPage from './error-page.tsx';
 import App from './App.tsx';
 import Users from './routes/users.tsx';
-import Books from './routes/books.tsx';
-import Book from './routes/book_info.tsx';
+import BookInfo from './routes/book_info.tsx';
 
 const router = createBrowserRouter([
   {
@@ -22,7 +21,7 @@ const router = createBrowserRouter([
       },
       {
         path: "books",
-        element: <Books></Books>
+        element: <BookInfo></BookInfo>
       },
       {
         path: "books/create",
@@ -31,7 +30,7 @@ const router = createBrowserRouter([
       {
         path: "books/:id",
         // TODO create book info page
-        element: <Book/>
+        element: <BookInfo />
       },
       {
         path: "chap/:id",
