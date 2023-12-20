@@ -26,7 +26,8 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  margin-top: 5rem;
+  margin-top: 3.5rem;
+  padding-top: 1rem;
   place-items: start;
   min-width: 320px;
   min-height: 100vh;
@@ -66,5 +67,32 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+#editorjs {
+  border: solid 1px #242424;
+  width: 80%;
+  border-radius: 10px;
+}
+.chapter_create {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  > h1 {
+    font-size: 30px;
+    margin: 0;
+    padding: 0;
+  }
+  > .vol_group {
+    > button {
+      max-lines: 1;
+    }
+    > select {
+      width: 7rem;
+    }
+  }
+  > .btn {
+    width: 7rem;
   }
 }

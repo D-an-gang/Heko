@@ -24,7 +24,6 @@ const Books = () => {
         return <Loading />
     }
     return (<>
-        {console.log(book_list)}
         <h1>Books</h1>
         <BookTable data={book_list}/>
     </>);

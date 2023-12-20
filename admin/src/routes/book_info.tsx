@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import app from "../firebase";
 import { Book, bookConverter } from "../models/book";
 import styles from "./book_info.module.css"
+import Volume_list from "../components/volume_list";
 
 const BookInfo = () => {
     const { id } = useParams()
@@ -33,11 +34,12 @@ const BookInfo = () => {
                 <p><span><strong>Total chapters:</strong></span> {book.chapters_number}</p>
                 <p><span><strong>Last update:</strong></span> {book.last_update.toDate().toDateString()}</p>
                 <p>{book.genre.map((x: string) =>
-                    <span className="badge rounded-pill bg-dark mx-1">{x}</span>)}</p>
+                    <span className="badge rounded-pill bg-dark mx-1" key={Math.random()}>{x}</span>)}</p>
                 <strong>Description:</strong>
                 <p>{book.description}</p>
             </div>
         </div>
+        <Volume_list id={book.id} />
     </>);
 }
 

@@ -5,10 +5,55 @@
   gap: 1rem;
   .infoes {
     p {
-      margin-bottom: .5rem;
+      margin-bottom: 0.5rem;
     }
   }
   .cover {
     width: 10rem;
+  }
+}
+.vols {
+  width: 80%;
+  background-color: rgb(221, 221, 221);
+  display: flex;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  flex-direction: column;
+  border-radius: 10px;
+  > .display_row {
+    width: 100%;
+    display: flex;
+    gap: 0.6rem;
+    > img {
+      width: 20%;
+      border-radius: 10px;
+    }
+    .chap_list {
+      width: 100%;
+      ul {
+        width: 100%;
+        padding: 0;
+        list-style-type: none;
+      }
+      .chap_item {
+        cursor: pointer;
+        width: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        font-size: larger;
+        border-radius: 10px;
+        transition: all 0.2s;
+        p {
+          margin: 0;
+        }
+      }
+      .chap_item:hover {
+        background-color: #fff;
+      }
+    }
   }
 }
