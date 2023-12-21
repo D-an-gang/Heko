@@ -1,5 +1,5 @@
-import { Timestamp, addDoc, collection, doc, getDocs, getFirestore, updateDoc } from "firebase/firestore";
-import { useSearchParams } from "react-router-dom";
+import { Timestamp, addDoc, collection, query as qry, doc, getDocs, getFirestore, increment, updateDoc, where } from "firebase/firestore";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import app from "../firebase";
 import { Volume, volumeConverter } from "../models/volume";
 import { useEffect, useState } from "react";
@@ -12,11 +12,16 @@ interface volume {
     title: string
     cover: string
 }
+interface chapter {
+    vol_id: string
+    title: string
+    content: string
+}
 const Chapter_create = () => {
     const [query] = useSearchParams()
+    const navigate = useNavigate()
     const [vol, setVol] = useState<Volume[]>(null)
-    const [content, setContent] = useState<string>(null)
-    const [title, setTitle] = useState<string>(null)
+    const [content, setContent] = useState<chapter>(null)
     const [show, setShow] = useState(false);
     const [newVol, setNewVol] = useState<volume>({ title: "", cover: "" })
     const [triggerEffect, setTriggerEffect] = useState(false);
@@ -52,19 +57,39 @@ const Chapter_create = () => {
         fetch()
         setTriggerEffect(false);
     }, [triggerEffect])
-    const handleOnChange = (event, editor) => {
-        setContent(editor.getData());
+    const handleOnChange = (_, editor) => {
+        setContent((prevValues) => ({ ...prevValues, content: editor.getData() }));
     }
-    const saveChanges = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const saveVol = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const volumn: string = event.target.value
-        const docRef = await addDoc(collection(db, "books", id, "volume", volumn, "chapters"), {
-            content: content,
+        setContent((prevValues) => ({
+            ...prevValues,
+            vol_id: volumn
+        }))
+    }
+    const saveChanges = async () => {
+        console.table({
+            vol_id: content.vol_id,
+            content: content.content,
             create_at: Timestamp.now(),
-            title: title
+            title: content.title
         });
-        await updateDoc(doc(db, "books", id, "volume", volumn, "chapters", docRef.id), {
+        const docRef = await addDoc(collection(db, "books", id, "volume", content.vol_id, "chapters"), {
+            content: content.content,
+            create_at: Timestamp.now(),
+            title: content.title
+        });
+        await updateDoc(doc(db, "books", id, "volume", content.vol_id, "chapters", docRef.id), {
             id: docRef.id
         })
+        const q = qry(collection(getFirestore(app), "bookShelf"), where("book_id", "==", id))
+        const snaps = await getDocs(q)
+        snaps.forEach(async (doc) => {
+            await updateDoc(doc.ref, {
+                unread: increment(1)
+            })
+        })
+        navigate("/books")
     }
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -80,13 +105,13 @@ const Chapter_create = () => {
                     <h1>Create a new chapter</h1>
                     <div className="vol_group d-flex gap-1">
                         <button onClick={handleShow} className="btn btn-secondary">New Volume</button>
-                        <select className="form-select" aria-label="Default select example" onChange={saveChanges}>
+                        <select className="form-select" aria-label="Default select example" onChange={saveVol}>
                             {vol.map((item) =>
                                 <option value={item.id} key={item.id}>{item.title}</option>
                             )}
                         </select>
                     </div>
-                    <input onChange={(event) => setTitle(event.target.value)} type="text" className="form-control" placeholder="Default input" id="inputDefault"></input>
+                    <input onChange={(event) => setContent((prevValues) => ({ ...prevValues, title: event.target.value }))} type="text" className="form-control" placeholder="Default input" id="inputDefault"></input>
                     <CKEditor
                         editor={ClassicEditor}
                         data="😭"
@@ -106,7 +131,7 @@ const Chapter_create = () => {
                         }}
                         onChange={handleOnChange}
                     />
-                    <button className="btn btn-primary">Save</button>
+                    <button className="btn btn-primary" onClick={saveChanges}>Save</button>
                 </div>
                 <Modal show={show} onHide={handleClose}>
                     <Modal.Header closeButton>
