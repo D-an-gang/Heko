@@ -62,7 +62,9 @@ public class ProfileFragment extends Fragment {
 
     private ImageView imageView;
 
-    /** @noinspection DataFlowIssue*/
+    /**
+     * @noinspection DataFlowIssue
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
@@ -212,6 +214,8 @@ public class ProfileFragment extends Fragment {
                                     .update("username", new_username.getText().toString())
                                     .addOnSuccessListener(aVoid -> {
                                         UItools.toast(requireActivity(), getString(R.string.profile_success_change_username));
+                                        ((MainActivity) requireActivity()).mapUser(mAuth.getCurrentUser());
+                                        getUser();
                                         dialog.dismiss();
                                     })
                                     .addOnFailureListener(e -> {
@@ -231,10 +235,12 @@ public class ProfileFragment extends Fragment {
                 }
         );
     }
+
     private void imageUploaderInit() {
         imageView = binding.profileImageDetail;
         binding.textChangeAvatar.setOnClickListener(e -> imageCropper());
     }
+
     private void imageCropper() {
         CropImageOptions cropImageOptions = new CropImageOptions();
         cropImageOptions.imageSourceIncludeGallery = true;
@@ -242,15 +248,16 @@ public class ProfileFragment extends Fragment {
         CropImageContractOptions cropImageContractOptions = new CropImageContractOptions(null, cropImageOptions);
         cropImage.launch(cropImageContractOptions);
     }
+
     ActivityResultLauncher<CropImageContractOptions> cropImage = registerForActivityResult(new CropImageContract(), result -> {
         if (result.isSuccessful()) {
             Bitmap cropped = BitmapFactory.decodeFile(result.getUriFilePath(requireContext(), true));
-            imageView.setPadding(0,0,0,0);
+            imageView.setPadding(0, 0, 0, 0);
             imageView.setImageBitmap(cropped);
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReference();
             // Create a reference to "mountains.jpg"
-            StorageReference usersPicRef = storageRef.child(System.currentTimeMillis()+".jpg");
+            StorageReference usersPicRef = storageRef.child(System.currentTimeMillis() + ".jpg");
 
             // Create a reference to 'images/mountains.jpg'
             //StorageReference usersPicImagesRef = storageRef.child("usersPhotos/" + user.getUid() + ".jpg");
@@ -270,10 +277,10 @@ public class ProfileFragment extends Fragment {
                         .addOnSuccessListener(uri -> {
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
                             db.collection("users").document(mAuth.getCurrentUser().getUid())
-                                    .update("imgUrl",uri.toString())
+                                    .update("imgUrl", uri.toString())
                                     .addOnSuccessListener(aVoid -> {
-                                        if(getContext() != null && getActivity() != null){
-                                            ((MainActivity)getActivity()).mapUser(mAuth.getCurrentUser());
+                                        if (getContext() != null && getActivity() != null) {
+                                            ((MainActivity) getActivity()).mapUser(mAuth.getCurrentUser());
                                             UItools.toast(requireContext(), "Cập nhật avatar thành công");
                                         }
                                         /*mViewModel.getUser().setValue();*/
