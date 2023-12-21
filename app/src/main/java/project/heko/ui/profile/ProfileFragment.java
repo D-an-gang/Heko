@@ -4,7 +4,10 @@ package project.heko.ui.profile;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,20 +19,29 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.canhub.cropper.CropImageContract;
+import com.canhub.cropper.CropImageContractOptions;
+import com.canhub.cropper.CropImageOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Objects;
 
 import project.heko.MainActivity;
@@ -48,6 +60,7 @@ public class ProfileFragment extends Fragment {
     private String old_username;
     private String old_email;
 
+    private ImageView imageView;
 
     /** @noinspection DataFlowIssue*/
     @Override
@@ -89,6 +102,7 @@ public class ProfileFragment extends Fragment {
         logoutButtonListener();
         updateProfileListener();
         updatePasswordListener();
+        imageUploaderInit();
     }
 
     private void logoutButtonListener() {
@@ -217,4 +231,62 @@ public class ProfileFragment extends Fragment {
                 }
         );
     }
+    private void imageUploaderInit() {
+        imageView = binding.profileImageDetail;
+        binding.textChangeAvatar.setOnClickListener(e -> imageCropper());
+    }
+    private void imageCropper() {
+        CropImageOptions cropImageOptions = new CropImageOptions();
+        cropImageOptions.imageSourceIncludeGallery = true;
+        cropImageOptions.imageSourceIncludeCamera = true;
+        CropImageContractOptions cropImageContractOptions = new CropImageContractOptions(null, cropImageOptions);
+        cropImage.launch(cropImageContractOptions);
+    }
+    ActivityResultLauncher<CropImageContractOptions> cropImage = registerForActivityResult(new CropImageContract(), result -> {
+        if (result.isSuccessful()) {
+            Bitmap cropped = BitmapFactory.decodeFile(result.getUriFilePath(requireContext(), true));
+            imageView.setPadding(0,0,0,0);
+            imageView.setImageBitmap(cropped);
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            // Create a reference to "mountains.jpg"
+            StorageReference usersPicRef = storageRef.child(System.currentTimeMillis()+".jpg");
+
+            // Create a reference to 'images/mountains.jpg'
+            //StorageReference usersPicImagesRef = storageRef.child("usersPhotos/" + user.getUid() + ".jpg");
+            // Get the data from an ImageView as bytes
+            imageView.setDrawingCacheEnabled(true);
+            imageView.buildDrawingCache();
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+            UploadTask uploadTask = usersPicRef.putBytes(data);
+            uploadTask.addOnFailureListener(exception -> {
+                // Handle unsuccessful uploads
+            }).addOnSuccessListener(taskSnapshot -> {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                taskSnapshot.getMetadata().getReference().getDownloadUrl()
+                        .addOnSuccessListener(uri -> {
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("users").document(mAuth.getCurrentUser().getUid())
+                                    .update("imgUrl",uri.toString())
+                                    .addOnSuccessListener(aVoid -> {
+                                        if(getContext() != null && getActivity() != null){
+                                            ((MainActivity)getActivity()).mapUser(mAuth.getCurrentUser());
+                                            UItools.toast(requireContext(), "Cập nhật avatar thành công");
+                                        }
+                                        /*mViewModel.getUser().setValue();*/
+                                    })
+                                    .addOnFailureListener(e -> UItools.toast(requireContext(), "Cập nhật avatar thất bại"));
+
+                        })
+                        .addOnFailureListener(e -> {
+
+                        });
+            });
+        } else {
+            Toast.makeText(this.getContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+        }
+    });
 }
